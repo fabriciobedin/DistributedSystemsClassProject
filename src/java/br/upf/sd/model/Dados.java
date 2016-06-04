@@ -13,12 +13,12 @@ public class Dados {
     
     private int acao;
     private Carro carro;
+    private boolean retorno;
 
-    public Dados(int acao, Carro carro) {
+    public Dados(int acao, Carro carro, boolean retorno) {
         this.acao = acao;
         this.carro = carro;
+        this.retorno = retorno;
     }
-    
-    
-
+  
 }
