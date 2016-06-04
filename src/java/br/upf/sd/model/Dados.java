@@ -5,6 +5,8 @@
  */
 package br.upf.sd.model;
 
+import java.util.Objects;
+
 /**
  *
  * @author Fabricio
@@ -20,5 +22,29 @@ public class Dados {
         this.carro = carro;
         this.retorno = retorno;
     }
-  
+
+    public int getAcao() {
+        return acao;
+    }
+
+    public Carro getCarro() {
+        return carro;
+    }
+
+    public boolean isRetorno() {
+        return retorno;
+    }
+
+    public void setAcao(int acao) {
+        this.acao = acao;
+    }
+
+    public void setCarro(Carro carro) {
+        this.carro = carro;
+    }
+
+    public void setRetorno(boolean retorno) {
+        this.retorno = retorno;
+    }
+
 }
