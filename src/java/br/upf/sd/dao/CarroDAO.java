@@ -20,21 +20,30 @@ public class CarroDAO extends ConnectionFactory {
         return instance;
     }
 
-    //metodo para listar todos os carros do banco
+
+    /**
+     * metodo responsavel por listar todos os dados 
+     * da tabela carro da bd trabalhosd,
+     * ordenados por codigo
+     * @author fabricio
+     * @return ArrayList
+     */
     public ArrayList<Carro> listarTodos() {
         Connection conexao = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
-
-        conexao = abrirConexao();
-        ArrayList<Carro> carros = new ArrayList<Carro>();
+        String sql = null;
+        ArrayList<Carro> carros = new ArrayList();
         
-
+        conexao = abrirConexao();
+        
         try {
-            pstmt = conexao.prepareStatement("select * from carros order by codigo");
+            sql = "select * from carros order by codigo";
+            pstmt = conexao.prepareStatement(sql);
             rs = pstmt.executeQuery();
 
             while (rs.next()) {
+                
                 Carro car = new Carro(); 
                 car.setCodigo(rs.getInt("codigo"));
                 car.setMarca(rs.getString("marca"));
@@ -55,8 +64,48 @@ public class CarroDAO extends ConnectionFactory {
         return carros;
 
     }
+    
+    /**
+     * metodo responsavel por adicionoar um novo carro
+     * na tabela carro da bd trabalhosd
+     * @author fabricio
+     * @param carros 
+     */
+    public void adicionarCarro(Carro carros) {
+        Connection conexao = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        String sql = null;
+        
+        conexao = abrirConexao();
+       
+        try {
+            sql = "INSERT INTO carros (codigo,marca,modelo,ano,potencia,carga,complemento) VALUES (?,?,?,?,?,?,?)";
+            pstmt = conexao.prepareStatement(sql);
+            pstmt.setInt(1, carros.getCodigo());
+            pstmt.setString(2, carros.getMarca());
+            pstmt.setString(3, carros.getModelo());
+            pstmt.setInt(4, carros.getAno());
+            pstmt.setFloat(5, carros.getPotencia());
+            pstmt.setFloat(6, carros.getCarga());
+            pstmt.setString(7, carros.getComplemento());
+            
+            rs = pstmt.executeQuery();
+            
+            
+        } catch (Exception e) {
+            System.out.println("Erro ao listar todos os carros: " + e);
+            e.printStackTrace();
+        } finally {
+            fecharConexao(conexao, pstmt, rs);
+        }
 
+    }
+    
+    
     //metodo para listar carros por id
+    //select * from carros where codigo=" + codigo
     //metodo para alterar um carro
     //metodo para apagar um carro
+    //@
 }
