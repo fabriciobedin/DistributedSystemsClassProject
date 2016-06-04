@@ -11,5 +11,14 @@ package br.upf.sd.model;
  */
 public class Dados {
     
+    private int acao;
+    private Carro carro;
+
+    public Dados(int acao, Carro carro) {
+        this.acao = acao;
+        this.carro = carro;
+    }
     
+    
+
 }
