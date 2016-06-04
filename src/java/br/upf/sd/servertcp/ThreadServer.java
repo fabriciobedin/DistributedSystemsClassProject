@@ -31,7 +31,35 @@ public class ThreadServer extends Thread {
             envia.writeObject(msgInicial());
             int opcao = (Integer)recebe.readInt();
 
-            
+            switch (opcao) {
+                case 1: {
+                    envia.writeObject("escolheu a opcao1");
+                    break;
+                }
+
+                case 2: {
+
+                    break;
+                }
+
+                case 3: {
+
+                    break;
+                }
+
+                case 4: {
+
+                    break;
+                }
+
+                case 5: {
+                    recebe.close();
+                    envia.close();
+                    cliente.close();
+                    break;
+                }
+
+            }
         } catch (Exception e) {
             System.out.println("Excecao ocorrida na thread: " + e.getMessage());
             try {
