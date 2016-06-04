@@ -5,6 +5,11 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+/**
+ * classe responsavel por abrir e fechar
+ * a conexao com o banco de dados
+ * @author fabricio
+ */
 public class ConnectionFactory {
     // Variáveis com o caminho do banco de dados.
     private static final String DRIVER = "org.postgresql.Driver";
@@ -12,7 +17,11 @@ public class ConnectionFactory {
     private static final String USUARIO = "postgres";
     private static final String SENHA = "";
 
-    // metodo para criar a conexao com o banco
+    /**
+     * metodo responsavel por abrir a conexao com o banco
+     * @author fabricio
+     * @return Connection
+     */
     public Connection abrirConexao() {
 
         Connection conexao = null;
@@ -29,7 +38,13 @@ public class ConnectionFactory {
         return conexao;
     }
 
-    //metodo para fechar conexao
+    /**
+     * metodo responsavel por fechar a conexao com o banco
+     * @author fabricio
+     * @param conexao
+     * @param pstmt
+     * @param rs 
+     */
     public void fecharConexao(Connection conexao, PreparedStatement pstmt, ResultSet rs) {
 
         try {
