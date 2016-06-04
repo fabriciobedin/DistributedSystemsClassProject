@@ -28,9 +28,10 @@ public class CarroDAO extends ConnectionFactory {
 
         conexao = abrirConexao();
         ArrayList<Carro> carros = new ArrayList<Carro>();
+        
 
         try {
-            pstmt = conexao.prepareStatement("select * from carros order by id");
+            pstmt = conexao.prepareStatement("select * from carros order by codigo");
             rs = pstmt.executeQuery();
 
             while (rs.next()) {
