@@ -22,48 +22,53 @@ public class ClientTCP {
      */
     public static void main(String[] args) throws Exception {
         int porta = 2006;
-        String host = null;
-        int opcao = 0;
-        boolean teste;
+        String ip = null;
+        int operacao;
+        boolean testeIP;
+        boolean testeOperacao;
         String menu;
         Scanner lerTeclado = new Scanner(System.in);
-
+        
         System.out.println("Olá, informe o endereço IP do servidor\nque deseja conectar e tecle enter.\n");
+        
+        //vai verificar se o ip digitado é válido.
+        //caso não seja, vai informar que não está correto e solicitar
+        //que o usuário digite novamente.
         do {
-            host = lerTeclado.nextLine();
-            teste = validarIP(host);
-            if (teste == false) {
-                System.out.println("\nIP inválido!!!");
+            ip = lerTeclado.nextLine();
+            testeIP = validarIP(ip);
+            if (testeIP == false) {
+                System.out.println("\nxxxxxxxxxxxxxx IP inválido!!! xxxxxxxxxxxxxx");
                 System.out.println("Por favor, digite novamente o endereço do servidor");
-                System.out.println("Ele deverá estar nesse modelo: 000.000.000.000");
+                System.out.println("Ele deverá seguir esse formato: 000.000.000.000");
             }
-        } while (teste == false);
-
+        } while (testeIP == false);
+        
+        //após informar um ip no formato válido, vai tentar se conectar ao servidor.
         try {
-            Socket servidor = new Socket(host, porta);
+            Socket servidor = new Socket(ip, porta);
             ObjectInputStream recebe = new ObjectInputStream(servidor.getInputStream());
             ObjectOutputStream envia = new ObjectOutputStream(servidor.getOutputStream());
 
             menu = (String) recebe.readObject();
-
+           
             do {
                 System.out.println(menu);
-                opcao = lerTeclado.nextInt();
-
-                if (opcao >= 6 || opcao <= 0) {
-                    System.out.println("Opção inválida!!!");
-                    System.out.println("Por favor, digite o número novamente\n\n");
+                operacao = lerTeclado.nextInt();
+                envia.writeInt(operacao);
+                //vai enviar a operacao para o servidor e aguardar resposta
+                //se a operação for válida, o servidor vai retornar true
+                //caso seja inválida, ele vai retornar false e aguardar nova operação
+                testeOperacao = recebe.readBoolean();
+                if (testeOperacao == false){
+                    System.out.println("xxxx Operação inválida!! xxxx");
+                    System.out.println("Por favor, digite novamente..\n");
+                }else{
+                    System.out.println("\n--> Processando dados...");
                 }
+            } while (testeOperacao = false);
 
-            } while (opcao >= 6 || opcao < 0);
-
-            System.out.println("--> Buscando dados...");
-            envia.write(opcao);
-            
-            
-            
-            
-
+ 
         } catch (Exception e) {
         }
 
