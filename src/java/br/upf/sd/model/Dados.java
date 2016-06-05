@@ -5,46 +5,63 @@
  */
 package br.upf.sd.model;
 
+import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
 /**
  *
  * @author Fabricio
  */
-public class Dados {
+public class Dados implements Serializable{
     
-    private int acao;
+    private int operacao;
     private Carro carro;
+    private List alteracao;
     private boolean retorno;
 
-    public Dados(int acao, Carro carro, boolean retorno) {
-        this.acao = acao;
+    public Dados(int operacao, Carro carro, boolean retorno) {
+        this.operacao = operacao;
         this.carro = carro;
         this.retorno = retorno;
     }
 
-    public int getAcao() {
-        return acao;
+    public Dados(int operacao, Carro carro, List alteracao, boolean retorno) {
+        this.operacao = operacao;
+        this.carro = carro;
+        this.alteracao = alteracao;
+        this.retorno = retorno;
+    }
+
+    public int getOperacao() {
+        return operacao;
     }
 
     public Carro getCarro() {
         return carro;
     }
 
+    public List getAlteracao() {
+        return alteracao;
+    }
+
     public boolean isRetorno() {
         return retorno;
     }
 
-    public void setAcao(int acao) {
-        this.acao = acao;
+    public void setOperacao(int operacao) {
+        this.operacao = operacao;
     }
 
     public void setCarro(Carro carro) {
         this.carro = carro;
     }
 
+    public void setAlteracao(List alteracao) {
+        this.alteracao = alteracao;
+    }
+
     public void setRetorno(boolean retorno) {
         this.retorno = retorno;
     }
-
 }
