@@ -5,6 +5,7 @@
  */
 package br.upf.sd.servertcp;
 
+
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
@@ -23,17 +24,40 @@ public class ThreadServer extends Thread {
     }
 
     public void run() {
-
+        int operacao;
+        boolean testeOperacao;
+        
         try {
+            System.out.println("Thread iniciada!");
             ObjectOutputStream envia = new ObjectOutputStream(cliente.getOutputStream());
             ObjectInputStream recebe = new ObjectInputStream(cliente.getInputStream());
-
+            
+            //após o cliente se conectar ao servidor, receberá uma mensagem com o menu disponível
             envia.writeObject(msgInicial());
-            int opcao = (Integer)recebe.readInt();
+            System.out.println("String com menu enviada para cliente!");
+            
+            //servidor aguarda resposta com a operacao que o cliente selecionar
+            operacao = recebe.readInt();
+            System.out.println("Mensagem recebida com a operação "+ operacao);
 
-            switch (opcao) {
+            //vai verificar se a operação informada existe no servidor
+            //caso a operacção não exista, o cliente será informado e
+            //o servidor aguardará nova operação
+            
+            do {
+                System.out.println("Iniciando teste de operação");
+                testeOperacao = validaOperacao(operacao);
+                if (testeOperacao == true) {
+                    envia.writeBoolean(true);
+                    System.out.println("Respondendo: operação válida!");
+                } else {
+                    envia.writeBoolean(false);
+                    System.out.println("Respondendo: operação inválida!");
+                }
+            } while (testeOperacao = false);
+
+            switch (operacao) {
                 case 1: {
-                    envia.writeObject("escolheu a opcao1");
                     break;
                 }
 
@@ -56,6 +80,7 @@ public class ThreadServer extends Thread {
                     recebe.close();
                     envia.close();
                     cliente.close();
+                    Thread.currentThread().stop();
                     break;
                 }
 
@@ -70,6 +95,12 @@ public class ThreadServer extends Thread {
 
     }
 
+    /**
+     * Método responsável por conter a mensagem inicial enviada para o cliente.
+     * Nessa mensagem contém o menu com as operações disponíveis
+     *
+     * @return String
+     */
     public String msgInicial() {
         String ipServer = "anônimo";
         try {
@@ -94,6 +125,24 @@ public class ThreadServer extends Thread {
 
         return menu;
 
+    }
+
+    /**
+     * Método responsável por testar se a opção escolhida pelo cliente é válida
+     * ou não. Retorna uma boolean verdadeira se estiver correta ou uma boolean
+     * falsa se estiver incorreta.
+     *
+     * @param operacao
+     * @return boolean
+     */
+    public boolean validaOperacao(int operacao) {
+        boolean retorno = true;
+        if (operacao >= 6 || operacao <= 0) {
+            retorno = false;
+        } else {
+            retorno = true;
+        }
+        return retorno;
     }
 
 }
