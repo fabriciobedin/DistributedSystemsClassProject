@@ -19,9 +19,10 @@ public class ServerTCP{
         boolean conectado = true;
         try {
             ServerSocket servidor = new ServerSocket(porta);
-            System.out.println("servidor ouvindo a porta 2006");
+            
             
             while (conectado) {
+                System.out.println("servidor ouvindo a porta 2006");
                 Socket cliente = servidor.accept();
                 System.out.println("cliente conectado: " + cliente.getInetAddress().getHostAddress());
                 
