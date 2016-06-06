@@ -6,6 +6,9 @@
 package br.upf.sd.servertcp;
 
 
+import br.upf.sd.dao.CarroDAO;
+import br.upf.sd.model.Carro;
+import br.upf.sd.model.Dados;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
@@ -34,30 +37,37 @@ public class ThreadServer extends Thread {
             
             //após o cliente se conectar ao servidor, receberá uma mensagem com o menu disponível
             envia.writeObject(msgInicial());
+            envia.flush();
             System.out.println("String com menu enviada para cliente!");
             
-            //servidor aguarda resposta com a operacao que o cliente selecionar
-            operacao = recebe.readInt();
-            System.out.println("Mensagem recebida com a operação "+ operacao);
-
-            //vai verificar se a operação informada existe no servidor
-            //caso a operacção não exista, o cliente será informado e
-            //o servidor aguardará nova operação
+            
             
             do {
+                //servidor aguarda resposta com a operacao que o cliente selecionar
+                System.out.println("Aguardando cliente...");
+                operacao = recebe.readInt();
+                System.out.println("Mensagem recebida com a operação "+ operacao);
+
+                //vai verificar se a operação informada existe no servidor
+                //caso a operacção não exista, o cliente será informado e
+                //o servidor aguardará nova operação
+                
                 System.out.println("Iniciando teste de operação");
                 testeOperacao = validaOperacao(operacao);
                 if (testeOperacao == true) {
                     envia.writeBoolean(true);
+                    envia.flush();
                     System.out.println("Respondendo: operação válida!");
                 } else {
                     envia.writeBoolean(false);
+                    envia.flush();
                     System.out.println("Respondendo: operação inválida!");
                 }
-            } while (testeOperacao = false);
+            } while (testeOperacao == false);
 
             switch (operacao) {
                 case 1: {
+                    listarCarro();
                     break;
                 }
 
@@ -135,14 +145,21 @@ public class ThreadServer extends Thread {
      * @param operacao
      * @return boolean
      */
-    public boolean validaOperacao(int operacao) {
-        boolean retorno = true;
+    public static boolean validaOperacao(int operacao) {
+        boolean retorno;
         if (operacao >= 6 || operacao <= 0) {
             retorno = false;
         } else {
             retorno = true;
         }
         return retorno;
+    }
+
+    private void listarCarro() {
+        Carro carro = new Carro();
+        CarroDAO.getInstance().listarTodos();
+        Dados dados = new Dados(carro);
+        
     }
 
 }

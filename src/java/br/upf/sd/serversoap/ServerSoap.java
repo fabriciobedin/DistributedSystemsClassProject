@@ -5,17 +5,22 @@
  */
 package br.upf.sd.serversoap;
 
+import javax.jws.WebService;
+import javax.jws.WebMethod;
+import javax.jws.WebParam;
+
 /**
  *
- * @author fabricio
+ * @author Fabricio
  */
+@WebService(serviceName = "ServerSoap")
 public class ServerSoap {
 
     /**
-     * @param args the command line arguments
+     * This is a sample web service operation
      */
-    public static void main(String[] args) {
-        // TODO code application logic here
+    @WebMethod(operationName = "hello")
+    public String hello(@WebParam(name = "name") String txt) {
+        return "Hello " + txt + " !";
     }
-    
 }

@@ -10,7 +10,7 @@ import java.util.Scanner;
  *
  * @author fabricio
  */
-public class ClientTCP {
+public class ClientTCPTeste {
 
     public static void main(String[] args) throws Exception {
         int porta = 2006;
@@ -68,7 +68,6 @@ public class ClientTCP {
         
         Dados dados = new Dados();
         dados = (Dados) recebe.readObject();
-        System.out.println(dados);
 
     }
 

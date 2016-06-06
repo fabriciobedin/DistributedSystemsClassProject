@@ -26,6 +26,13 @@ public class Dados implements Serializable{
         this.retorno = retorno;
     }
 
+    public Dados(Carro carro) {
+        this.carro = carro;
+    }
+
+    public Dados() {
+    }
+
     public Dados(int operacao, Carro carro, List alteracao, boolean retorno) {
         this.operacao = operacao;
         this.carro = carro;
