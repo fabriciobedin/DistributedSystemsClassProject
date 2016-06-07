@@ -13,6 +13,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.ArrayList;
 
 /**
  *
@@ -156,9 +157,10 @@ public class ThreadServer extends Thread {
     }
 
     private void listarCarro() {
-        Carro carro = new Carro();
-        CarroDAO.getInstance().listarTodos();
-        Dados dados = new Dados(carro);
+        ArrayList<Carro> dados = new ArrayList<>();
+        
+        CarroDAO dao = new CarroDAO();
+        dados = dao.listarTodos();
         
     }
 
