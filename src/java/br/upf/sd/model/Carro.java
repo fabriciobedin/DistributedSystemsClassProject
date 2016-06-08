@@ -21,7 +21,25 @@ public class Carro {
     private String complemento;
 
     public Carro() {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+        public Carro(Integer codigo, String marca, String modelo, Integer ano, float potencia, float carga, String complemento) {
+        this.codigo = codigo;
+        this.marca = marca;
+        this.modelo = modelo;
+        this.ano = ano;
+        this.potencia = potencia;
+        this.carga = carga;
+        this.complemento = complemento;
+    }
+
+    public Carro(Integer codigo) {
+        this.codigo = codigo;
+    }
+
+    public Carro(String modelo, Integer ano) {
+        this.modelo = modelo;
+        this.ano = ano;
     }
 
     public int getCodigo() {
