@@ -273,7 +273,7 @@ public class TiraFila extends Thread{
     
     
     public static void alteracarro(Carro carro) throws SQLException{
-            //                               1          2          3          4            5            6                   7                   
+            //                                        
             String sql = "update Carro set marca = ?, modelo = ?, ano = ?, potencia = ?, carga = ?, complemento = ? where codigo = ?";
             PreparedStatement stmt = ConexaoBanco.getPreparedStatement(sql);
             stmt.setString(1, carro.getMarca());
