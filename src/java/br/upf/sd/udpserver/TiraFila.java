@@ -47,7 +47,7 @@ public class TiraFila extends Thread{
         
         while (true) {                
             try {    
-                //System.out.println("Aguardando Pacote" + Servidor.getDataHora());
+              
                 pacotes = queue.retira();
                 System.out.println("Pacote retirado da fila " + Servidor.getDataHora());
               
