@@ -32,4 +32,25 @@ public class ClientSoap {
         carro.setCodigo(0);
         return carro;
     }
+    public String Adiciona(int codigo, String marca, String modelo, int ano, float potencia, float carga, String complemento) {
+        try {
+            service = new ServerSoapService();
+            ServerSoap port = service.getServerSoapPort();
+            switch(port.adiciona(codigo, marca, modelo, ano, potencia, carga, complemento))
+            {
+                case 0:
+                    return "Registro inserido com sucesso!";
+                case 2:
+                    return "Já existe um registroe com o código: " + Integer.toString(codigo) + "!";
+                case 1:
+                case 3:
+                default:
+                    return "Erro ao executar operação, contate o Suporte!";
+            }
+            
+        } catch (Exception e) {
+            return e.getMessage();
+        }
+    }
+    
 }

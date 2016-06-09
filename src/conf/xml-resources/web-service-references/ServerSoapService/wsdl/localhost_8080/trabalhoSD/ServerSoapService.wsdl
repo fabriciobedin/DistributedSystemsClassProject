@@ -10,15 +10,34 @@
 <message name="ConsultaResponse">
 <part name="parameters" element="tns:ConsultaResponse"/>
 </message>
+<message name="Adiciona">
+<part name="parameters" element="tns:Adiciona"/>
+</message>
+<message name="AdicionaResponse">
+<part name="parameters" element="tns:AdicionaResponse"/>
+</message>
 <portType name="ServerSoap">
 <operation name="Consulta">
 <input wsam:Action="http://serversoap.sd.upf.br/ServerSoap/ConsultaRequest" message="tns:Consulta"/>
 <output wsam:Action="http://serversoap.sd.upf.br/ServerSoap/ConsultaResponse" message="tns:ConsultaResponse"/>
 </operation>
+<operation name="Adiciona">
+<input wsam:Action="http://serversoap.sd.upf.br/ServerSoap/AdicionaRequest" message="tns:Adiciona"/>
+<output wsam:Action="http://serversoap.sd.upf.br/ServerSoap/AdicionaResponse" message="tns:AdicionaResponse"/>
+</operation>
 </portType>
 <binding name="ServerSoapPortBinding" type="tns:ServerSoap">
 <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
 <operation name="Consulta">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="Adiciona">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>

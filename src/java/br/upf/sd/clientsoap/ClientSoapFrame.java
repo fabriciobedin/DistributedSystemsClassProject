@@ -219,7 +219,6 @@ public class ClientSoapFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_comboAcaoActionPerformed
 
     private void botaoEnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoEnviarActionPerformed
-
         switch (comboAcao.getSelectedItem().toString()) {
             case "Consulta":
                 if (campoCodigo.getText().isEmpty()) {
@@ -227,24 +226,49 @@ public class ClientSoapFrame extends javax.swing.JFrame {
                 } else if (testInteger(campoCodigo.getText()) && Integer.parseInt(campoCodigo.getText()) > 0) {
                     Carro carro;
                     carro = clientSoap.Consulta(Integer.parseInt(campoCodigo.getText()));
-                    if (carro.getCodigo() == 0)
-                    {
+                    if (carro.getCodigo() == 0) {
                         limparCampos();
                         JOptionPane.showMessageDialog(null, "Não foi encontrado nenhum Carro para o código fornecido!");
                         break;
                     }
-                    
+
                     campoCodigo.setText(Integer.toString(carro.getCodigo()));
                     campoMarca.setText(carro.getMarca());
                     campoModelo.setText(carro.getModelo());
                     campoAno.setText(Integer.toString(carro.getAno()));
                     campoPotencia.setText(Float.toString(carro.getPotencia()));
-                    campoCarga.setText(Float.toString(carro.getCarga())); 
+                    campoCarga.setText(Float.toString(carro.getCarga()));
                     campoComplemento.setText(carro.getComplemento());
+
                 } else {
-                    JOptionPane.showMessageDialog(null, "O campo Código déve ser um inteiro maior que 0 (zero)!");
+                    JOptionPane.showMessageDialog(null, "O campo Código deve ser um inteiro maior que 0 (zero)!");
                 }
                 break;
+            case "Adiciona":
+                if (campoCodigo.getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Preencha o campo Código!");
+                } else if (testInteger(campoCodigo.getText()) && Integer.parseInt(campoCodigo.getText()) > 0) {
+
+                    String valMarca       = (campoMarca.getText() == null) ? "" : campoMarca.getText();
+                    String vaModelo       = (campoModelo.getText() == null) ? "" : campoModelo.getText();
+                    int    valAno         = validarInt(campoAno.getText());
+                    float  valPotencia    = validarFloat(campoPotencia.getText());
+                    float  valCarga       = validarFloat(campoCarga.getText());                   
+                    String valComplemento = (campoComplemento.getText() == null) ? "" : campoComplemento.getText();
+                    
+                    JOptionPane.showMessageDialog(null, clientSoap.Adiciona(
+                            Integer.parseInt(campoCodigo.getText()),
+                            valMarca,
+                            vaModelo,
+                            valAno,
+                            valPotencia,
+                            valCarga,
+                            valComplemento
+                    ));
+
+                } else {
+                    JOptionPane.showMessageDialog(null, "O campo Código deve ser um inteiro maior que 0 (zero)!");
+                }
             default:
                 break;
         }
@@ -317,8 +341,8 @@ public class ClientSoapFrame extends javax.swing.JFrame {
             return false;
         }
     }
-    
-    private void limparCampos (){
+
+    private void limparCampos() {
         campoCodigo.setText(null);
         campoMarca.setText(null);
         campoModelo.setText(null);
@@ -326,5 +350,21 @@ public class ClientSoapFrame extends javax.swing.JFrame {
         campoPotencia.setText(null);
         campoCarga.setText(null);
         campoComplemento.setText(null);
+    }
+    
+    private int validarInt(String val) {
+        try {
+            return Integer.parseInt(val);
+        } catch (NumberFormatException | NullPointerException e) {
+        }
+        return 0;
+    }
+
+    private float validarFloat(String val) {
+        try {
+            return Float.parseFloat(val);
+        } catch (NumberFormatException | NullPointerException e) {
+        }
+        return 0;
     }
 }
