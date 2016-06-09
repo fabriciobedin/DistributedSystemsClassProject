@@ -52,5 +52,25 @@ public class ClientSoap {
             return e.getMessage();
         }
     }
+   
+    public String Excluir(int codigo) {
+        try {
+            service = new ServerSoapService();
+            ServerSoap port = service.getServerSoapPort();
+            switch(port.excluir(codigo))
+            {
+                case 0:
+                    return "Nenhum registro foi encontrado para o Código Informado!";
+                case 1:
+                    return "Carro de código: " + Integer.toString(codigo) + " excluido com sucesso!";
+                case -1:
+                default:
+                    return "Erro ao executar operação, contate o Suporte!";
+            }
+            
+        } catch (Exception e) {
+            return e.getMessage();
+        }
+    }
     
 }

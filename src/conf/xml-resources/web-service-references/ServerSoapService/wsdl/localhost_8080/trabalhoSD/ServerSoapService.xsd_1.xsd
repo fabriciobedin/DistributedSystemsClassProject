@@ -8,6 +8,22 @@
 
 <xs:element name="ConsultaResponse" type="tns:ConsultaResponse"/>
 
+<xs:element name="Excluir" type="tns:Excluir"/>
+
+<xs:element name="ExcluirResponse" type="tns:ExcluirResponse"/>
+
+<xs:complexType name="Excluir">
+<xs:sequence>
+<xs:element name="codigo" type="xs:int"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="ExcluirResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:int"/>
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="Adiciona">
 <xs:sequence>
 <xs:element name="codigo" type="xs:int"/>

@@ -269,6 +269,18 @@ public class ClientSoapFrame extends javax.swing.JFrame {
                 } else {
                     JOptionPane.showMessageDialog(null, "O campo Código deve ser um inteiro maior que 0 (zero)!");
                 }
+                break;
+            case "Excluir":
+                         if (campoCodigo.getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Preencha o campo Código!");
+                } else if (testInteger(campoCodigo.getText()) && Integer.parseInt(campoCodigo.getText()) > 0) {
+                    
+                    JOptionPane.showMessageDialog(null, clientSoap.Excluir(Integer.parseInt(campoCodigo.getText())));
+
+                } else {
+                    JOptionPane.showMessageDialog(null, "O campo Código deve ser um inteiro maior que 0 (zero)!");
+                }
+                break;
             default:
                 break;
         }

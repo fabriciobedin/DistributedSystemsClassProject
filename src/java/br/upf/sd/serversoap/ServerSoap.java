@@ -181,4 +181,24 @@ public class ServerSoap {
         return 3;
     }
 
+    /**
+     * Web service operation
+     */
+    @WebMethod(operationName = "Excluir")
+    public int Excluir(@WebParam(name = "codigo") int codigo) {
+   if (codigo > 0) {
+            if (criarConexao()) {
+                try {
+                    Statement st = conn.createStatement();
+                    st.executeUpdate("DELETE FROM carro WHERE codigo = " + Integer.toString(codigo));
+                    return st.getUpdateCount();
+                } catch (SQLException e) {
+                    return -1;
+                }
+            }
+        }
+        
+        return -1;
+    }
+
 }
