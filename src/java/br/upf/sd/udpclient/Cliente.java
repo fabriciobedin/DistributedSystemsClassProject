@@ -22,8 +22,8 @@ import java.util.logging.Logger;
 public class Cliente {
 
        public static void main(String[] args) throws UnknownHostException{
-        byte[] msgenvia = new byte[500];
-        byte[] msgrecebe = new byte[500];
+        byte[] msgenvia = new byte[3000];
+        byte[] msgrecebe = new byte[3000];
         String enviardados;
         String resposta;
         int porta = 2010;

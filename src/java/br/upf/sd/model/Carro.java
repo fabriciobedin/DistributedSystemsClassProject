@@ -160,7 +160,9 @@ public class Carro {
     
     @Override
     public String toString() {
-        return super.toString(); //To change body of generated methods, choose Tools | Templates.
+        return   "Codigo: "+ this.getCodigo() + " Marca: " + this.getMarca() + " Modelo: " + 
+                this.getModelo() + " Ano: " + this.getAno() + " Carga: " + this.getCarga() + " Potencia: " + this.getPotencia() + " Complemento: " + this.getComplemento() + "\n";
+        //return super.toString(); //To change body of generated methods, choose Tools | Templates.
     }
     
     

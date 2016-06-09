@@ -149,6 +149,10 @@ public class TiraFila extends Thread{
                     case 6:
                         try {
                             listacarro = listarcarro();
+                            //System.out.println(listacarro);
+                           // for(Carro c: listacarro) {
+                                //System.out.println(c.toString());
+                            //}
                             retornadadoscliente = listacarro.toString();
                             
                         } catch (SQLException ex) {
@@ -241,7 +245,7 @@ public class TiraFila extends Thread{
         
         List<Carro> lista = new ArrayList();
         Statement stmt = ConexaoBanco.getStatement();
-        ResultSet resultado = stmt.executeQuery("select * from Carro");
+        ResultSet resultado = stmt.executeQuery("select * from Carro order by codigo");
         
         while(resultado.next()){
             Carro car = new Carro();
