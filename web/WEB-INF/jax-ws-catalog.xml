@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
+    <system systemId="http://localhost:8080/trabalhoSD/ServerSoapService?WSDL" uri="wsdl/localhost_8080/trabalhoSD/ServerSoapService.wsdl"/>
+    <system systemId="http://localhost:8080/trabalhoSD/ServerSoapService?xsd=1" uri="wsdl/localhost_8080/trabalhoSD/ServerSoapService.xsd_1.xsd"/>
+    <system systemId="http://localhost:8080/trabalhoSD/ServerSoap?WSDL" uri="wsdl/localhost_8080/trabalhoSD/ServerSoap.wsdl"/>
+    <system systemId="http://localhost:8080/trabalhoSD/ServerSoap?xsd=1" uri="wsdl/localhost_8080/trabalhoSD/ServerSoap.xsd_1.xsd"/>
+</catalog>

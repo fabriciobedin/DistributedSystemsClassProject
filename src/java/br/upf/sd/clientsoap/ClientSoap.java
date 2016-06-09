@@ -11,11 +11,25 @@ package br.upf.sd.clientsoap;
  */
 public class ClientSoap {
 
+    static ServerSoapService service;
+
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
     }
-    
+
+    public Carro Consulta(int codigo) {
+        try {
+            service = new ServerSoapService();
+            ServerSoap port = service.getServerSoapPort();
+            return port.consulta(codigo);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Carro carro = new Carro();
+        carro.setCodigo(0);
+        return carro;
+    }
 }

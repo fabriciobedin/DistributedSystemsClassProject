@@ -11,20 +11,18 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Arrays;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
-import javax.xml.soap.SOAPFault;
-import org.json.JSONArray;
-
 
 /**
  *
  * @author Fabricio
  */
-@WebService(serviceName = "ServerSoap")
+@WebService(name = "ServerSoap", serviceName = "ServerSoapService")
 public class ServerSoap {
+
+    private Connection conn = null;
 
     /**
      * Web service operation
@@ -33,37 +31,17 @@ public class ServerSoap {
      */
     @WebMethod(operationName = "Consulta")
     public Carro Consulta(@WebParam(name = "codigo") int codigo) {
+
         Carro carro = new Carro();
-        
-        try {
-            Class.forName("org.postgresql.Driver");
-        } catch (ClassNotFoundException e) {
-            //TODO implementar SOAPFault
-        }
 
-        Connection conn = null;
-
-        try {
-            conn = DriverManager.getConnection(
-                    "jdbc:postgresql://ec2-52-67-44-247.sa-east-1.compute.amazonaws.com:5432/trabalhosd",
-                    "postgres",
-                    ""
-            );
-
-        } catch (SQLException e) {
-            //TODO implementar SOAPFault
-        }
-        
-
- 
-        if (conn != null) {
+        if (this.criarConexao()) {
 
             try {
 
                 Statement st = conn.createStatement();
-                ResultSet rs = st.executeQuery("SELECT * FROM carro WHERE codigo = 1");
+                ResultSet rs = st.executeQuery("SELECT * FROM carro WHERE codigo = " + codigo);
                 while (rs.next()) {
-                   carro = populaCarro(rs);
+                    carro = populaCarro(rs);
                 }
                 rs.close();
                 st.close();
@@ -90,6 +68,28 @@ public class ServerSoap {
         carro.setComplemento(rs.getString("complemento"));
 
         return carro;
+    }
+
+    private boolean criarConexao() {
+        try {
+            Class.forName("org.postgresql.Driver");
+
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+
+        try {
+            conn = DriverManager.getConnection(
+                    "jdbc:postgresql://ec2-52-67-44-247.sa-east-1.compute.amazonaws.com:5432/trabalhosd",
+                    "postgres",
+                    ""
+            );
+
+        } catch (SQLException e) {
+            return false;
+        }
+
+        return conn != null;
     }
 
 }
