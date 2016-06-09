@@ -145,10 +145,35 @@ public class ServerSoap {
         }
 
         String strSql;
-        strSql = "INSERT INTO carro (" + String.join(", ", campos) + ") " +
-                 "VALUES (" + String.join(", ", values) + ");";
-        
+        strSql = "INSERT INTO carro (" + String.join(", ", campos) + ") "
+                + "VALUES (" + String.join(", ", values) + ")";
+
         return strSql;
+    }
+
+    private String montarUpdate(int codigo, String marca, String modelo, int ano, float potencia, float carga, String complemento) {
+        List<String> operacoes = new ArrayList<>();
+
+        if (marca != null) 
+            operacoes.add("marca = '" + marca + "'");
+
+       if (modelo != null) 
+            operacoes.add("modelo = '" + marca + "'");
+
+        operacoes.add("ano = " + ((ano == -1) ? "NULL" : Integer.toString(ano)));
+
+        operacoes.add("potencia = " + ((potencia == -1) ? "NULL" : Float.toString(potencia)));
+
+        operacoes.add("carga = " + ((carga == -1) ? "NULL" : Float.toString(carga)));
+
+        if (complemento != null) 
+            operacoes.add("complemento = '" + complemento + "'");
+
+        if (!operacoes.isEmpty()) {
+            return "UPDATE carro SET " + String.join(", ", operacoes) + " WHERE codigo = " + Integer.toString(codigo);
+        }
+
+        return "-1";
     }
 
     /**
@@ -170,14 +195,15 @@ public class ServerSoap {
                     st.executeUpdate(montarInsert(codigo, marca, modelo, ano, potencia, carga, complemento));
                     return 0;
                 } catch (SQLException e) {
-                    if (e.getMessage().contains("duplicate key value violates unique constraint"))
+                    if (e.getMessage().contains("duplicate key value violates unique constraint")) {
                         return 2;
-                    else
+                    } else {
                         return 1;
+                    }
                 }
             }
         }
-        
+
         return 3;
     }
 
@@ -186,7 +212,7 @@ public class ServerSoap {
      */
     @WebMethod(operationName = "Excluir")
     public int Excluir(@WebParam(name = "codigo") int codigo) {
-   if (codigo > 0) {
+        if (codigo > 0) {
             if (criarConexao()) {
                 try {
                     Statement st = conn.createStatement();
@@ -197,7 +223,32 @@ public class ServerSoap {
                 }
             }
         }
-        
+
+        return -1;
+    }
+
+    /**
+     * Web service operation
+     */
+    @WebMethod(operationName = "Altera")
+    public int Altera(@WebParam(name = "codigo") int codigo, @WebParam(name = "marca") String marca, @WebParam(name = "modelo") String modelo, @WebParam(name = "ano") int ano, @WebParam(name = "potencia") float potencia, @WebParam(name = "carga") float carga, @WebParam(name = "complemento") String complemento) {
+        if (codigo > 0) {
+            if (criarConexao()) {
+                try {
+                    String sql = montarUpdate(codigo, marca, modelo, ano, potencia, carga, complemento);
+                    if (sql != "") {
+
+                        Statement st = conn.createStatement();
+                        st.executeUpdate(sql);
+                        return st.getUpdateCount();
+
+                    }
+                } catch (SQLException e) {
+                    return -1;
+                }
+            }
+        }
+
         return -1;
     }
 

@@ -41,7 +41,7 @@ public class ClientSoap {
                 case 0:
                     return "Registro inserido com sucesso!";
                 case 2:
-                    return "Já existe um registroe com o código: " + Integer.toString(codigo) + "!";
+                    return "Já existe um registro com o código: " + Integer.toString(codigo) + "!";
                 case 1:
                 case 3:
                 default:
@@ -60,9 +60,28 @@ public class ClientSoap {
             switch(port.excluir(codigo))
             {
                 case 0:
-                    return "Nenhum registro foi encontrado para o Código Informado!";
+                    return "Nenhum registro foi encontrado para o Código: " + Integer.toString(codigo) + "!";
                 case 1:
                     return "Carro de código: " + Integer.toString(codigo) + " excluido com sucesso!";
+                case -1:
+                default:
+                    return "Erro ao executar operação, contate o Suporte!";
+            }
+            
+        } catch (Exception e) {
+            return e.getMessage();
+        }
+    }
+        public String Altera(int codigo, String marca, String modelo, int ano, float potencia, float carga, String complemento) {
+        try {
+            service = new ServerSoapService();
+            ServerSoap port = service.getServerSoapPort();
+            switch(port.altera(codigo, marca, modelo, ano, potencia, carga, complemento))
+            {
+                case 0:
+                    return "Nenhum registro foi encontrado para o Código: " + Integer.toString(codigo) + "!";
+                case 1:
+                    return "Registro alterado com sucesso!";
                 case -1:
                 default:
                     return "Erro ao executar operação, contate o Suporte!";

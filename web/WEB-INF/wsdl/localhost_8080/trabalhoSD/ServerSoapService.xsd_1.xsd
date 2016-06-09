@@ -4,6 +4,10 @@
 
 <xs:element name="AdicionaResponse" type="tns:AdicionaResponse"/>
 
+<xs:element name="Altera" type="tns:Altera"/>
+
+<xs:element name="AlteraResponse" type="tns:AlteraResponse"/>
+
 <xs:element name="Consulta" type="tns:Consulta"/>
 
 <xs:element name="ConsultaResponse" type="tns:ConsultaResponse"/>
@@ -11,6 +15,24 @@
 <xs:element name="Excluir" type="tns:Excluir"/>
 
 <xs:element name="ExcluirResponse" type="tns:ExcluirResponse"/>
+
+<xs:complexType name="Altera">
+<xs:sequence>
+<xs:element name="codigo" type="xs:int"/>
+<xs:element name="marca" type="xs:string" minOccurs="0"/>
+<xs:element name="modelo" type="xs:string" minOccurs="0"/>
+<xs:element name="ano" type="xs:int"/>
+<xs:element name="potencia" type="xs:float"/>
+<xs:element name="carga" type="xs:float"/>
+<xs:element name="complemento" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="AlteraResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:int"/>
+</xs:sequence>
+</xs:complexType>
 
 <xs:complexType name="Excluir">
 <xs:sequence>

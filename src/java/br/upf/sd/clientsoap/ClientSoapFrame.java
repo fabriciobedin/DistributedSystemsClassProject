@@ -281,6 +281,32 @@ public class ClientSoapFrame extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(null, "O campo Código deve ser um inteiro maior que 0 (zero)!");
                 }
                 break;
+                 case "Altera":
+                if (campoCodigo.getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Preencha o campo Código!");
+                } else if (testInteger(campoCodigo.getText()) && Integer.parseInt(campoCodigo.getText()) > 0) {
+
+                    String valMarca       = (campoMarca.getText() == null) ? "" : campoMarca.getText();
+                    String vaModelo       = (campoModelo.getText() == null) ? "" : campoModelo.getText();
+                    int    valAno         = validarInt(campoAno.getText());
+                    float  valPotencia    = validarFloat(campoPotencia.getText());
+                    float  valCarga       = validarFloat(campoCarga.getText());                   
+                    String valComplemento = (campoComplemento.getText() == null) ? "" : campoComplemento.getText();
+                    
+                    JOptionPane.showMessageDialog(null, clientSoap.Altera(
+                            Integer.parseInt(campoCodigo.getText()),
+                            valMarca,
+                            vaModelo,
+                            valAno,
+                            valPotencia,
+                            valCarga,
+                            valComplemento
+                    ));
+
+                } else {
+                    JOptionPane.showMessageDialog(null, "O campo Código deve ser um inteiro maior que 0 (zero)!");
+                }
+                break;
             default:
                 break;
         }
