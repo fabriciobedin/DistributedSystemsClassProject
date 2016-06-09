@@ -38,7 +38,7 @@ public class Cliente {
         DatagramSocket soc;
         DatagramPacket pct;
         
-        
+        //
        // EnviaDados enviaDados;
         //controle da opcao do cliente
         Integer acao = 0;
