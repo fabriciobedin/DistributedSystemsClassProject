@@ -1,16 +1,24 @@
 package br.upf.sd.clienttcp;
 
-import br.upf.sd.model.Dados;
+
+import br.upf.sd.model.Carro;
+import br.upf.sd.model.CarroJson;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+
 import java.util.Scanner;
+import org.json.JSONObject;
+
 
 /**
  *
- * @author fabricio
+ * @author Fabricio Bedin
  */
 public class ClientTCP {
+    private String[] strDados = new String[10];
+    private String dados;
 
     public static void main(String[] args) throws Exception {
         int porta = 2006;
@@ -18,15 +26,16 @@ public class ClientTCP {
         int operacao = 0;
         boolean testeIP;
         boolean testeOperacao;
+        boolean verifica;
         String menu;
+        String enviardados;
+        byte[] msgenvia = new byte[3000];
         Scanner lerTeclado = new Scanner(System.in);
+        Scanner lerTeclado2 = new Scanner(System.in);
 
         System.out.println("Olá, informe o endereço IP do servidor que deseja conectar e tecle enter.");
         
-
         //vai verificar se o ip digitado é válido.
-        //caso não seja, vai informar que não está correto e solicitar
-        //que o usuário digite novamente.
         do {
             System.out.print("-->");
             ip = lerTeclado.nextLine();
@@ -52,9 +61,8 @@ public class ClientTCP {
             operacao = lerTeclado.nextInt();
             envia.writeInt(operacao);
             envia.flush();
-            //vai enviar a operacao para o servidor e aguardar resposta
-            //se a operação for válida, o servidor vai retornar true
-            //caso seja inválida, ele vai retornar false e aguardar nova operação
+            
+            //vai enviar a operacao para o servidor e aguardar resposta se é valida ou não
             boolean aaa = new Boolean(recebe.readBoolean());
             testeOperacao = aaa;
             if (testeOperacao == false) {
@@ -66,11 +74,81 @@ public class ClientTCP {
             }
         } while (testeOperacao == false);
         
-        Dados dados = new Dados();
-        dados = (Dados) recebe.readObject();
-        System.out.println(dados);
+        
+        
+        switch (operacao) {
+            //adicionar carro
+            case 1:
+                //CarroJson carroJson = new CarroJson();
+                //System.out.println("\n************ Adicionar Carro ************");
+                //System.out.print("\nDigite o código do Carro: ");
+                //carroJson.setCodigo(lerTeclado2.nextLine());
+                
+                //System.out.print("\nDigite a marca do Carro: ");
+                //carroJson.setMarca(lerTeclado2.nextLine());
+                //System.out.print("\nDigite o modelo do Carro: ");
+                //carroJson.setModelo(lerTeclado2.nextLine());
+                //System.out.print("\nDigite o ano do Carro: ");
+                //carroJson.setAno(lerTeclado2.nextLine());
+                //System.out.print("\nDigite o potencia do Carro: ");
+                //carroJson.setPotencia(lerTeclado2.nextLine());
+                //System.out.print("\nDigite o carga do Carro: ");
+                //carroJson.setCarga(lerTeclado2.nextLine());
+                //System.out.print("\nDigite o complemento: ");
+                //carroJson.setComplemento(lerTeclado2.nextLine());
+                
+                //envia.writeObject(carroJson.toString());
+                
+                JSONObject myObj = new JSONObject();
+                System.out.println("\n************ Adicionar Carro ************");
+                System.out.print("\nDigite o código do Carro: ");
+                myObj.put("codigo", Integer.parseInt(lerTeclado2.nextLine()));
+                
+                System.out.print("\nDigite a marca do Carro: ");
+                myObj.put("marca", lerTeclado2.nextLine());
+                
+                System.out.print("\nDigite o modelo do Carro: ");
+                myObj.put("modelo", lerTeclado2.nextLine());
+                
+                System.out.print("\nDigite o ano do Carro: ");
+                myObj.put("ano", Integer.parseInt(lerTeclado2.nextLine()));
+                
+                System.out.print("\nDigite o potencia do Carro: ");
+                myObj.put("potencia", Float.parseFloat(lerTeclado2.nextLine()));
+                
+                System.out.print("\nDigite o carga do Carro: ");
+                myObj.put("carga", Float.parseFloat(lerTeclado2.nextLine()));
+                
+                
+                System.out.print("\nDigite o complemento: ");
+                myObj.put("complemento", lerTeclado2.nextLine());
+                String dadosEnvio = myObj.toString();
+                System.out.println(dadosEnvio);
+                envia.writeObject(dadosEnvio);
+                envia.flush();
+                System.out.println("Dados enviados para o servidor. Aguardando confirmação...");
+                
+                verifica = recebe.readBoolean();
+                if (verifica == true){
+                    System.out.println("\n\n*********** Carro adicionado com sucesso! ***********");
+                } else{                
+                    System.out.println("\n\nxxxxxxxxxxx ERRO! Carro não adicionado xxxxxxxxxxx");
+                    System.out.println("Deseja tentar adicionar novamente? (s/n)");
+                }
+                
+                
+                break;
+        }
+        
+        
+        
+        
 
     }
+    
+        
+    
+    
 
     /**
      * Verifica se um endereço IP é válido

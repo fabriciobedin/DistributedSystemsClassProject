@@ -7,10 +7,12 @@ package br.upf.sd.servertcp;
 
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  *
- * @author fabricio
+ * @author Fabricio Bedin
  */
 public class ServerTCP{
 
@@ -22,7 +24,7 @@ public class ServerTCP{
             
             
             while (conectado) {
-                System.out.println("servidor ouvindo a porta 2006");
+                System.out.println("servidor executando, porta " + porta + " aberta!! " + getDataHora());
                 Socket cliente = servidor.accept();
                 System.out.println("cliente conectado: " + cliente.getInetAddress().getHostAddress());
                 
@@ -33,6 +35,10 @@ public class ServerTCP{
         } catch (Exception e) {
             System.out.println("Erro: " + e.getMessage());
         }
+    }
+    public static String getDataHora(){
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        return dateFormat.format(new Date()) + " ";  
     }
 
 }

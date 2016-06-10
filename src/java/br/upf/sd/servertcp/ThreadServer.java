@@ -5,19 +5,19 @@
  */
 package br.upf.sd.servertcp;
 
-
 import br.upf.sd.dao.CarroDAO;
 import br.upf.sd.model.Carro;
-import br.upf.sd.model.Dados;
+
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.util.ArrayList;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  *
- * @author fabricio
+ * @author Fabricio Bedin
  */
 public class ThreadServer extends Thread {
 
@@ -30,29 +30,26 @@ public class ThreadServer extends Thread {
     public void run() {
         int operacao;
         boolean testeOperacao;
-        
+
         try {
             System.out.println("Thread iniciada!");
             ObjectOutputStream envia = new ObjectOutputStream(cliente.getOutputStream());
             ObjectInputStream recebe = new ObjectInputStream(cliente.getInputStream());
-            
+
             //após o cliente se conectar ao servidor, receberá uma mensagem com o menu disponível
             envia.writeObject(msgInicial());
             envia.flush();
             System.out.println("String com menu enviada para cliente!");
-            
-            
-            
+
             do {
                 //servidor aguarda resposta com a operacao que o cliente selecionar
                 System.out.println("Aguardando cliente...");
                 operacao = recebe.readInt();
-                System.out.println("Mensagem recebida com a operação "+ operacao);
+                System.out.println("Mensagem recebida com a operação " + operacao);
 
                 //vai verificar se a operação informada existe no servidor
                 //caso a operacção não exista, o cliente será informado e
                 //o servidor aguardará nova operação
-                
                 System.out.println("Iniciando teste de operação");
                 testeOperacao = validaOperacao(operacao);
                 if (testeOperacao == true) {
@@ -68,26 +65,54 @@ public class ThreadServer extends Thread {
 
             switch (operacao) {
                 case 1: {
-                    listarCarro();
-                    break;
+                    //adicionar
+                    Carro carro = new Carro();
+                    
+                    JSONObject carroObject = new JSONObject(recebe.readObject());
+                    
+                    System.out.println(carroObject.toString());
+                    
+                    carro.setCodigo(Integer.parseInt(carroObject.getString("codigo")));
+                    carro.setMarca(carroObject.getString("marca"));
+                    carro.setModelo(carroObject.getString("modelo"));
+                    carro.setAno(Integer.parseInt(carroObject.getString("ano")));
+                    carro.setPotencia(Float.parseFloat(carroObject.getString("potencia")));
+                    carro.setCarga(Float.parseFloat(carroObject.getString("carga")));
+                    carro.setComplemento(carroObject.getString("complemento"));
+                    
+                    
+                    
+                    System.out.println(carro.toString());
+                    boolean verifica;
+                    verifica = CarroDAO.getInstance().adicionarCarro(carro);
+                    envia.writeBoolean(verifica);
+                    envia.flush();
+                   
+                    
+                      
                 }
 
-                case 2: {
-
+                
+            case 2: {
+                    //alterar
                     break;
                 }
 
                 case 3: {
-
+                    //excluir
                     break;
                 }
 
                 case 4: {
-
+                    //consultar
                     break;
                 }
 
                 case 5: {
+                    //ano-modelo
+                    break;
+                }
+                case 6: {
                     recebe.close();
                     envia.close();
                     cliente.close();
@@ -104,14 +129,13 @@ public class ThreadServer extends Thread {
             }
         }
 
-    }
-
-    /**
-     * Método responsável por conter a mensagem inicial enviada para o cliente.
-     * Nessa mensagem contém o menu com as operações disponíveis
-     *
-     * @return String
-     */
+        }
+        /**
+         * Método responsável por conter a mensagem inicial enviada para o
+         * cliente. Nessa mensagem contém o menu com as operações disponíveis
+         *
+         * @return String
+         */
     public String msgInicial() {
         String ipServer = "anônimo";
         try {
@@ -126,11 +150,11 @@ public class ThreadServer extends Thread {
                 + "**                                                                                      **\n"
                 + "**                     Digite abaixo o número da opção desejada                         **\n"
                 + "**                                                                                      **\n"
-                + "**                  1 - Listar                        3 - Adicionar                     **\n"
+                + "**                  1 - Adicionar                     4 - Consultar                     **\n"
                 + "**                                                                                      **\n"
-                + "**                  2 - Editar                        4 - Apagar                        **\n"
+                + "**                  2 - Alterar                       5 - Ano/modelo                    **\n"
                 + "**                                                                                      **\n"
-                + "**                                     5 - Sair                                         **\n"
+                + "**                  3 - Excluir                       6 - Sair                          **\n"
                 + "**                                                                                      **\n"
                 + "******************************************************************************************\n");
 
@@ -148,20 +172,11 @@ public class ThreadServer extends Thread {
      */
     public static boolean validaOperacao(int operacao) {
         boolean retorno;
-        if (operacao >= 6 || operacao <= 0) {
+        if (operacao >= 7 || operacao <= 0) {
             retorno = false;
         } else {
             retorno = true;
         }
         return retorno;
     }
-
-    private void listarCarro() {
-        ArrayList<Carro> dados = new ArrayList<>();
-        
-        CarroDAO dao = new CarroDAO();
-        dados = dao.listarTodos();
-        
-    }
-
 }
