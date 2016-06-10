@@ -3,19 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.upf.sd.serverrest;
+package br.upf.sd.model;
 
 /**
  *
  * @author fabricio
  */
-public class ServerRest {
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        // TODO code application logic here
-    }
+public class Json {
     
 }

@@ -1,6 +1,7 @@
 package br.upf.sd.clienttcp;
 
 import br.upf.sd.model.Carro;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -8,6 +9,8 @@ import java.net.Socket;
 
 import java.util.Scanner;
 import org.json.JSONObject;
+import org.json.simple.JSONArray;
+import org.json.simple.parser.JSONParser;
 
 /**
  *
@@ -142,29 +145,53 @@ public class ClientTCP {
                 System.out.print("Informe o código do carro: ");
                 envia.writeInt(Integer.parseInt(lerTeclado4.nextLine()));
 
-                Carro carro = new Carro();
+//                Carro carro = new Carro();
+//
+//                JSONObject carroObject = new JSONObject(recebe.readObject());
+//
+//                System.out.println(carroObject.toString());
+//
+//                carro.setCodigo(Integer.parseInt(carroObject.getString("codigo")));
+//                carro.setMarca(carroObject.getString("marca"));
+//                carro.setModelo(carroObject.getString("modelo"));
+//                carro.setAno(Integer.parseInt(carroObject.getString("ano")));
+//                carro.setPotencia(Float.parseFloat(carroObject.getString("potencia")));
+//                carro.setCarga(Float.parseFloat(carroObject.getString("carga")));
+//                carro.setComplemento(carroObject.getString("complemento"));
+//
+//                System.out.println("\n************ Carro recebido ************");
+//                System.out.println("Codigo:" + carro.getCodigo());
+//                System.out.println("Marca:" + carro.getMarca());
+//                System.out.println("Modelo:" + carro.getModelo());
+//                System.out.println("Ano:" + carro.getAno());
+//                System.out.println("Potencia:" + carro.getPotencia());
+//                System.out.println("Carga:" + carro.getCarga());
+//                System.out.println("Complemento:" + carro.getComplemento());
+//                System.out.println("------------------------------");
 
-                JSONObject carroObject = new JSONObject(recebe.readObject());
+                JSONParser parser = new JSONParser();
 
-                System.out.println(carroObject.toString());
+                JSONArray a = (JSONArray) parser.parse(new FileReader("saida.json"));
 
-                carro.setCodigo(Integer.parseInt(carroObject.getString("codigo")));
-                carro.setMarca(carroObject.getString("marca"));
-                carro.setModelo(carroObject.getString("modelo"));
-                carro.setAno(Integer.parseInt(carroObject.getString("ano")));
-                carro.setPotencia(Float.parseFloat(carroObject.getString("potencia")));
-                carro.setCarga(Float.parseFloat(carroObject.getString("carga")));
-                carro.setComplemento(carroObject.getString("complemento"));
+                for (Object o : a) {
+                    JSONObject object = (JSONObject) o;
 
-                System.out.println("\n************ Carro recebido ************");
-                System.out.println("Codigo:" + carro.getCodigo());
-                System.out.println("Marca:" + carro.getMarca());
-                System.out.println("Modelo:" + carro.getModelo());
-                System.out.println("Ano:" + carro.getAno());
-                System.out.println("Potencia:" + carro.getPotencia());
-                System.out.println("Carga:" + carro.getCarga());
-                System.out.println("Complemento:" + carro.getComplemento());
-                System.out.println("------------------------------");
+                    String name = (String) object.get("name");
+                    System.out.println(name);
+
+                    String city = (String) object.get("city");
+                    System.out.println(city);
+
+                    String job = (String) object.get("job");
+                    System.out.println(job);
+
+                    JSONArray cars = (JSONArray) object.get("cars");
+
+                    for (Object c : cars) {
+                        System.out.println(c + "");
+                    }
+
+                }
 
                 break;
             }
