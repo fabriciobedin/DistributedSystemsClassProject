@@ -141,7 +141,7 @@ public class ClientTCP {
                 System.out.println("\n************ Consultar Carro ************");
                 System.out.print("Informe o código do carro: ");
                 envia.writeInt(Integer.parseInt(lerTeclado4.nextLine()));
-                
+
                 Carro carro = new Carro();
 
                 JSONObject carroObject = new JSONObject(recebe.readObject());
@@ -155,9 +155,17 @@ public class ClientTCP {
                 carro.setPotencia(Float.parseFloat(carroObject.getString("potencia")));
                 carro.setCarga(Float.parseFloat(carroObject.getString("carga")));
                 carro.setComplemento(carroObject.getString("complemento"));
-                
+
                 System.out.println("\n************ Carro recebido ************");
-                System.out.println(carro.toString());
+                System.out.println("Codigo:" + carro.getCodigo());
+                System.out.println("Marca:" + carro.getMarca());
+                System.out.println("Modelo:" + carro.getModelo());
+                System.out.println("Ano:" + carro.getAno());
+                System.out.println("Potencia:" + carro.getPotencia());
+                System.out.println("Carga:" + carro.getCarga());
+                System.out.println("Complemento:" + carro.getComplemento());
+                System.out.println("------------------------------");
+
                 break;
             }
 
