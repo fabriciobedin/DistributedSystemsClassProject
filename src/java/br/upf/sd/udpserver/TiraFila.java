@@ -118,7 +118,7 @@ public class TiraFila extends Thread{
                                     carrorecebido.getComplemento();
                         } catch (SQLException ex) {
                             System.out.println(Servidor.getDataHora() + ex.getMessage());
-                            retornadadoscliente = "Consulta não realizada!!!";
+                            retornadadoscliente = "Consulta não realizada, Codigo não encontrado!!!";
                         }   break;
                     case 3:
                         try {

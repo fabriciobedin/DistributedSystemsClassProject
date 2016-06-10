@@ -15,22 +15,16 @@ import java.sql.Statement;
 public class ConexaoBanco {
 
 
-    static String url = "jdbc:postgresql://localhost/Trabalho_SD";
-    static String driver = "org.postgresql.Driver";
-    static String usuario = "postgres";
-    static String senha = "masterkey";
-    //static String url = "jdbc:postgresql:ec2-52-67-44-247.sa-east-1.compute.amazonaws.com:5432/trabalho";
-    //static String driver = "org.postgresql.Driver";
-    //static String usuario = "postgres";
-    //static String senha = "";
 
+   static String driver = "org.postgresql.Driver";
+   
     static Connection conexao = null;
 
     public static Connection getConexao(){
         try{
            if (conexao == null){
                Class.forName(driver);
-               conexao = DriverManager.getConnection(url, usuario, senha);
+               conexao = DriverManager.getConnection("jdbc:postgresql://ec2-52-67-44-247.sa-east-1.compute.amazonaws.com:5432/trabalhosd", "postgres", "");
            }
         }catch( ClassNotFoundException e1){
             System.out.println("Classe do driver não encontrada!");
