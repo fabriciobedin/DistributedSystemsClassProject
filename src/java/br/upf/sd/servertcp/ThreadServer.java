@@ -12,6 +12,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.ArrayList;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -30,6 +31,7 @@ public class ThreadServer extends Thread {
     public void run() {
         int operacao;
         boolean testeOperacao;
+        boolean verifica;
 
         try {
             System.out.println("Thread iniciada!");
@@ -67,11 +69,11 @@ public class ThreadServer extends Thread {
                 case 1: {
                     //adicionar
                     Carro carro = new Carro();
-                    
+
                     JSONObject carroObject = new JSONObject(recebe.readObject());
-                    
+
                     System.out.println(carroObject.toString());
-                    
+
                     carro.setCodigo(Integer.parseInt(carroObject.getString("codigo")));
                     carro.setMarca(carroObject.getString("marca"));
                     carro.setModelo(carroObject.getString("modelo"));
@@ -79,32 +81,81 @@ public class ThreadServer extends Thread {
                     carro.setPotencia(Float.parseFloat(carroObject.getString("potencia")));
                     carro.setCarga(Float.parseFloat(carroObject.getString("carga")));
                     carro.setComplemento(carroObject.getString("complemento"));
-                    
-                    
-                    
+
                     System.out.println(carro.toString());
-                    boolean verifica;
+
                     verifica = CarroDAO.getInstance().adicionarCarro(carro);
                     envia.writeBoolean(verifica);
                     envia.flush();
-                   
-                    
-                      
                 }
 
-                
-            case 2: {
+                case 2: {
                     //alterar
                     break;
                 }
 
                 case 3: {
                     //excluir
+                    int codApagar = recebe.readInt();
+                    System.out.println("Apagando carro com o código: " + codApagar);
+                    verifica = CarroDAO.getInstance().apagarCarro(codApagar);
+                    envia.writeBoolean(verifica);
+                    System.out.println("Confirmação enviada para cliente!");
                     break;
                 }
 
                 case 4: {
                     //consultar
+                    int codListar = recebe.readInt();
+                    System.out.println("Consultando carro com o código: " + codListar);
+                    ArrayList<Carro> carro = new ArrayList<>();
+                    carro = CarroDAO.getInstance().listarCodigo(codListar);
+
+                    while (carro.next()) {
+                        
+                        Carro car = new Carro();
+                        car.setCodigo(rs.getInt("codigo"));
+                        car.setMarca(rs.getString("marca"));
+                        car.setModelo(rs.getString("modelo"));
+                        car.setAno(rs.getInt("ano"));
+                        car.setPotencia(rs.getFloat("potencia"));
+                        car.setCarga(rs.getFloat("carga"));
+                        car.setComplemento(rs.getString("complemento"));
+                        carros.add(car);
+                    }
+                    JSONObject carroObjeto = new JSONObject();
+                    carroObjeto.put("codigo", carro.get(""));
+                    carroObjeto.put("marca", lerTeclado2.nextLine());
+                    carroObjeto.put("modelo", lerTeclado2.nextLine());
+                    carroObjeto.put("ano", Integer.parseInt(lerTeclado2.nextLine()));
+                    carroObjeto.put("potencia", Float.parseFloat(lerTeclado2.nextLine()));
+                    carroObjeto.put("carga", Float.parseFloat(lerTeclado2.nextLine()));
+                    carroObjeto.put("complemento", lerTeclado2.nextLine());
+                    
+                    
+                    carro.get(1);
+
+                    
+                    retornadadoscliente =  "Codigo: " + carrorecebido.getCodigo() + " Marca: " +
+                                    carrorecebido.getMarca() + " Modelo:" +
+                                    carrorecebido.getModelo() + " Ano:" +
+                                    carrorecebido.getAno() + " Potencia:" +
+                                    carrorecebido.getPotencia() + " Carga:" +
+                                    carrorecebido.getCarga() + " Complemento:" +
+                                    carrorecebido.getComplemento();
+                    
+                    
+                    
+                    
+                    
+                    
+                    String dadosEnvio = carroObjeto.toString();
+                    System.out.println("dados que serão enviados: " + dadosEnvio);
+
+                    envia.writeObject(dadosEnvio);
+                    envia.flush();
+                    System.out.println("Dados enviados para o servidor. Aguardando confirmação...");
+
                     break;
                 }
 
@@ -129,13 +180,14 @@ public class ThreadServer extends Thread {
             }
         }
 
-        }
-        /**
-         * Método responsável por conter a mensagem inicial enviada para o
-         * cliente. Nessa mensagem contém o menu com as operações disponíveis
-         *
-         * @return String
-         */
+    }
+
+    /**
+     * Método responsável por conter a mensagem inicial enviada para o cliente.
+     * Nessa mensagem contém o menu com as operações disponíveis
+     *
+     * @return String
+     */
     public String msgInicial() {
         String ipServer = "anônimo";
         try {
@@ -154,7 +206,7 @@ public class ThreadServer extends Thread {
                 + "**                                                                                      **\n"
                 + "**                  2 - Alterar                       5 - Ano/modelo                    **\n"
                 + "**                                                                                      **\n"
-                + "**                  3 - Excluir                       6 - Sair                          **\n"
+                + "**                  3 - Apagar                        6 - Sair                          **\n"
                 + "**                                                                                      **\n"
                 + "******************************************************************************************\n");
 
