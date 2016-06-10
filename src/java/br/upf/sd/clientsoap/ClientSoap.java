@@ -5,6 +5,9 @@
  */
 package br.upf.sd.clientsoap;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author fabricio
@@ -19,12 +22,17 @@ public class ClientSoap {
     public static void main(String[] args) {
     }
 
+    /**
+     *
+     * @param codigo
+     * @return
+     */
     public Carro Consulta(int codigo) {
         try {
             service = new ServerSoapService();
             ServerSoap port = service.getServerSoapPort();
             return port.consulta(codigo);
-            
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -32,12 +40,12 @@ public class ClientSoap {
         carro.setCodigo(0);
         return carro;
     }
+
     public String Adiciona(int codigo, String marca, String modelo, int ano, float potencia, float carga, String complemento) {
         try {
             service = new ServerSoapService();
             ServerSoap port = service.getServerSoapPort();
-            switch(port.adiciona(codigo, marca, modelo, ano, potencia, carga, complemento))
-            {
+            switch (port.adiciona(codigo, marca, modelo, ano, potencia, carga, complemento)) {
                 case 0:
                     return "Registro inserido com sucesso!";
                 case 2:
@@ -47,18 +55,17 @@ public class ClientSoap {
                 default:
                     return "Erro ao executar operação, contate o Suporte!";
             }
-            
+
         } catch (Exception e) {
             return e.getMessage();
         }
     }
-   
+
     public String Excluir(int codigo) {
         try {
             service = new ServerSoapService();
             ServerSoap port = service.getServerSoapPort();
-            switch(port.excluir(codigo))
-            {
+            switch (port.excluir(codigo)) {
                 case 0:
                     return "Nenhum registro foi encontrado para o Código: " + Integer.toString(codigo) + "!";
                 case 1:
@@ -67,17 +74,17 @@ public class ClientSoap {
                 default:
                     return "Erro ao executar operação, contate o Suporte!";
             }
-            
+
         } catch (Exception e) {
             return e.getMessage();
         }
     }
-        public String Altera(int codigo, String marca, String modelo, int ano, float potencia, float carga, String complemento) {
+
+    public String Altera(int codigo, String marca, String modelo, int ano, float potencia, float carga, String complemento) {
         try {
             service = new ServerSoapService();
             ServerSoap port = service.getServerSoapPort();
-            switch(port.altera(codigo, marca, modelo, ano, potencia, carga, complemento))
-            {
+            switch (port.altera(codigo, marca, modelo, ano, potencia, carga, complemento)) {
                 case 0:
                     return "Nenhum registro foi encontrado para o Código: " + Integer.toString(codigo) + "!";
                 case 1:
@@ -86,10 +93,23 @@ public class ClientSoap {
                 default:
                     return "Erro ao executar operação, contate o Suporte!";
             }
-            
+
         } catch (Exception e) {
             return e.getMessage();
         }
     }
-    
+
+    public List<Carro> ListaAnoModelo(int ano, String modelo) {
+        List<Carro> listCarros = new ArrayList<>();
+        try {
+            service = new ServerSoapService();
+            ServerSoap port = service.getServerSoapPort();
+
+            listCarros = port.listaAnoModelo(ano, modelo);
+        } catch (Exception e) {
+        }
+
+        return listCarros;
+    }
+
 }

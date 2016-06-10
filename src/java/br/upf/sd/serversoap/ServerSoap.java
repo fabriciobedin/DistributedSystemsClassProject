@@ -28,51 +28,29 @@ public class ServerSoap {
     private Connection conn = null;
 
     /**
-     * Web service operation
-     *
-     * @param codigo
+     * @param rs
+     * @return
+     * @throws SQLException
      */
-    @WebMethod(operationName = "Consulta")
-    public Carro Consulta(@WebParam(name = "codigo") int codigo) {
-
-        Carro carro = new Carro();
-
-        if (this.criarConexao()) {
-
-            try {
-
-                Statement st = conn.createStatement();
-                ResultSet rs = st.executeQuery("SELECT * FROM carro WHERE codigo = " + codigo);
-                while (rs.next()) {
-                    carro = populaCarro(rs);
-                }
-                rs.close();
-                st.close();
-
-            } catch (SQLException e) {
-                //TODO implementar SOAPFault
-            }
-
-        } else {
-            //TODO implementar SOAPFault
-        }
-        return carro;
-    }
-
     private static Carro populaCarro(ResultSet rs) throws SQLException {
         Carro carro = new Carro();
-
-        carro.setCodigo(rs.getInt("codigo"));
-        carro.setMarca(rs.getString("marca"));
-        carro.setModelo(rs.getString("modelo"));
-        carro.setAno(rs.getInt("ano"));
-        carro.setPotencia(rs.getFloat("potencia"));
-        carro.setCarga(rs.getFloat("carga"));
-        carro.setComplemento(rs.getString("complemento"));
+        
+        if (rs.getInt("codigo") > 0) {
+            carro.setCodigo(rs.getInt("codigo"));
+            carro.setMarca(rs.getString("marca"));
+            carro.setModelo(rs.getString("modelo"));
+            carro.setAno(rs.getInt("ano"));
+            carro.setPotencia(rs.getFloat("potencia"));
+            carro.setCarga(rs.getFloat("carga"));
+            carro.setComplemento(rs.getString("complemento"));
+        }
 
         return carro;
     }
 
+    /**
+     * @return
+     */
     private boolean criarConexao() {
         try {
             Class.forName("org.postgresql.Driver");
@@ -151,14 +129,26 @@ public class ServerSoap {
         return strSql;
     }
 
+    /**
+     * @param codigo
+     * @param marca
+     * @param modelo
+     * @param ano
+     * @param potencia
+     * @param carga
+     * @param complemento
+     * @return
+     */
     private String montarUpdate(int codigo, String marca, String modelo, int ano, float potencia, float carga, String complemento) {
         List<String> operacoes = new ArrayList<>();
 
-        if (marca != null) 
+        if (marca != null) {
             operacoes.add("marca = '" + marca + "'");
+        }
 
-       if (modelo != null) 
+        if (modelo != null) {
             operacoes.add("modelo = '" + marca + "'");
+        }
 
         operacoes.add("ano = " + ((ano == -1) ? "NULL" : Integer.toString(ano)));
 
@@ -166,14 +156,46 @@ public class ServerSoap {
 
         operacoes.add("carga = " + ((carga == -1) ? "NULL" : Float.toString(carga)));
 
-        if (complemento != null) 
+        if (complemento != null) {
             operacoes.add("complemento = '" + complemento + "'");
+        }
 
         if (!operacoes.isEmpty()) {
             return "UPDATE carro SET " + String.join(", ", operacoes) + " WHERE codigo = " + Integer.toString(codigo);
         }
 
         return "-1";
+    }
+
+    /**
+     * @param codigo
+     * @return
+     */
+    @WebMethod(operationName = "Consulta")
+    public Carro Consulta(@WebParam(name = "codigo") int codigo) {
+
+        Carro carro = new Carro();
+
+        if (this.criarConexao()) {
+
+            try {
+
+                Statement st = conn.createStatement();
+                ResultSet rs = st.executeQuery("SELECT * FROM carro WHERE codigo = " + codigo);
+                while (rs.next()) {
+                    carro = populaCarro(rs);
+                }
+                rs.close();
+                st.close();
+
+            } catch (SQLException e) {
+                //TODO implementar SOAPFault
+            }
+
+        } else {
+            //TODO implementar SOAPFault
+        }
+        return carro;
     }
 
     /**
@@ -208,7 +230,8 @@ public class ServerSoap {
     }
 
     /**
-     * Web service operation
+     * @param codigo
+     * @return
      */
     @WebMethod(operationName = "Excluir")
     public int Excluir(@WebParam(name = "codigo") int codigo) {
@@ -228,7 +251,14 @@ public class ServerSoap {
     }
 
     /**
-     * Web service operation
+     * @param codigo
+     * @param marca
+     * @param modelo
+     * @param ano
+     * @param potencia
+     * @param carga
+     * @param complemento
+     * @return
      */
     @WebMethod(operationName = "Altera")
     public int Altera(@WebParam(name = "codigo") int codigo, @WebParam(name = "marca") String marca, @WebParam(name = "modelo") String modelo, @WebParam(name = "ano") int ano, @WebParam(name = "potencia") float potencia, @WebParam(name = "carga") float carga, @WebParam(name = "complemento") String complemento) {
@@ -250,6 +280,38 @@ public class ServerSoap {
         }
 
         return -1;
+    }
+
+    /**
+     * @param ano
+     * @param modelo
+     * @return
+     */
+    @WebMethod(operationName = "ListaAnoModelo")
+    public List<Carro> ListaAnoModelo(@WebParam(name = "ano") int ano, @WebParam(name = "modelo") String modelo) {
+        List<Carro> listCarros = new ArrayList<>();
+        if (this.criarConexao()) {
+            try {
+                String sqlAno    = (ano == -1) ? "(ano IS NULL OR ano = '')" : "ano = " + Integer.toString(ano);
+                String sqlModelo = ("".equals(modelo)) ? "(modelo IS NULL OR modelo = '')" : "modelo = '" + modelo + "'";
+                
+                Statement st = conn.createStatement();
+                ResultSet rs = st.executeQuery("SELECT * FROM carro WHERE  " + sqlAno + " AND " + sqlModelo);
+                while (rs.next()) {
+                    listCarros.add(populaCarro(rs));
+                }
+                rs.close();
+                st.close();
+
+            } catch (SQLException e) {
+                //TODO implementar SOAPFault
+            }
+
+        } else {
+            //TODO implementar SOAPFault
+        }
+
+        return listCarros;
     }
 
 }

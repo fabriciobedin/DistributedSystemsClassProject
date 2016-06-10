@@ -28,6 +28,12 @@
 <message name="AlteraResponse">
 <part name="parameters" element="tns:AlteraResponse"/>
 </message>
+<message name="ListaAnoModelo">
+<part name="parameters" element="tns:ListaAnoModelo"/>
+</message>
+<message name="ListaAnoModeloResponse">
+<part name="parameters" element="tns:ListaAnoModeloResponse"/>
+</message>
 <portType name="ServerSoap">
 <operation name="Excluir">
 <input wsam:Action="http://serversoap.sd.upf.br/ServerSoap/ExcluirRequest" message="tns:Excluir"/>
@@ -44,6 +50,10 @@
 <operation name="Altera">
 <input wsam:Action="http://serversoap.sd.upf.br/ServerSoap/AlteraRequest" message="tns:Altera"/>
 <output wsam:Action="http://serversoap.sd.upf.br/ServerSoap/AlteraResponse" message="tns:AlteraResponse"/>
+</operation>
+<operation name="ListaAnoModelo">
+<input wsam:Action="http://serversoap.sd.upf.br/ServerSoap/ListaAnoModeloRequest" message="tns:ListaAnoModelo"/>
+<output wsam:Action="http://serversoap.sd.upf.br/ServerSoap/ListaAnoModeloResponse" message="tns:ListaAnoModeloResponse"/>
 </operation>
 </portType>
 <binding name="ServerSoapPortBinding" type="tns:ServerSoap">
@@ -76,6 +86,15 @@
 </output>
 </operation>
 <operation name="Altera">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="ListaAnoModelo">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
