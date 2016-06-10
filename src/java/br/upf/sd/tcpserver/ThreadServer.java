@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.upf.sd.servertcp;
+package br.upf.sd.tcpserver;
 
 import br.upf.sd.dao.CarroDAO;
 import br.upf.sd.model.Carro;

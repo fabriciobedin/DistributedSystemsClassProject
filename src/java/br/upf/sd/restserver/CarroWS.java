@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ws;
+package br.upf.sd.restserver;
 
 import com.google.gson.Gson;
-import dao.CarroDAO;
+import br.upf.sd.dao.CarroDAO;
 import java.util.List;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
@@ -18,7 +18,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PUT;
 import javax.ws.rs.PathParam;
-import modelo.Carro;
+import br.upf.sd.model.CarroRest;
 
 /**
  * REST Web Service
@@ -40,7 +40,7 @@ public class CarroWS {
     @Path("Carro/get/{codigo}")
     public String getCarro(@PathParam("codigo") int codigo)
     {
-        Carro u = new Carro();
+        CarroRest u = new CarroRest();
         u.setCodigo(codigo);
         
         CarroDAO dao = new CarroDAO();
@@ -55,7 +55,7 @@ public class CarroWS {
     @Path("Carro/list")
     public String listCarro()
     {
-        List<Carro> lista;
+        List<CarroRest> lista;
         
         CarroDAO dao = new CarroDAO();
         lista = dao.listar();
@@ -69,7 +69,7 @@ public class CarroWS {
     @Path("Carro/atualizar")
     public String atualizar (String content) {
     Gson g = new Gson();
-        Carro u = (Carro) g.fromJson(content, Carro.class);
+        CarroRest u = (CarroRest) g.fromJson(content, CarroRest.class);
         
         CarroDAO dao = new CarroDAO();
         dao.atualizar(u);
@@ -84,7 +84,7 @@ public class CarroWS {
     public String inserir (String content) {
         
         Gson g = new Gson();
-        Carro u = (Carro) g.fromJson(content, Carro.class);
+        CarroRest u = (CarroRest) g.fromJson(content, CarroRest.class);
         
         CarroDAO dao = new CarroDAO();
         dao.inserir(u);
@@ -98,7 +98,7 @@ public class CarroWS {
     @Consumes("application/json")
     public String excluir(@PathParam("codigo") int codigo)
     {
-        Carro u = new Carro();
+        CarroRest u = new CarroRest();
         u.setCodigo(codigo);
         
         CarroDAO dao = new CarroDAO();

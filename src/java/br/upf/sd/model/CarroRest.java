@@ -4,13 +4,13 @@
  * and open the template in the editor.
  */
 
-package modelo;
+package br.upf.sd.model;
 
 /**
  *
  * @author Luciano
  */
-public class Carro {
+public class CarroRest {
     
     private Integer codigo;
     private String modelo;
