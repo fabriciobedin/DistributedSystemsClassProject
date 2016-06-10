@@ -108,53 +108,24 @@ public class ThreadServer extends Thread {
                     //consultar
                     int codListar = recebe.readInt();
                     System.out.println("Consultando carro com o código: " + codListar);
-                    ArrayList<Carro> carro = new ArrayList<>();
-                    carro = CarroDAO.getInstance().listarCodigo(codListar);
-
-                    while (carro.next()) {
-                        
-                        Carro car = new Carro();
-                        car.setCodigo(rs.getInt("codigo"));
-                        car.setMarca(rs.getString("marca"));
-                        car.setModelo(rs.getString("modelo"));
-                        car.setAno(rs.getInt("ano"));
-                        car.setPotencia(rs.getFloat("potencia"));
-                        car.setCarga(rs.getFloat("carga"));
-                        car.setComplemento(rs.getString("complemento"));
-                        carros.add(car);
-                    }
+                    
+                    Carro carro = CarroDAO.getInstance().listarCodigo(codListar);
+                    
                     JSONObject carroObjeto = new JSONObject();
-                    carroObjeto.put("codigo", carro.get(""));
-                    carroObjeto.put("marca", lerTeclado2.nextLine());
-                    carroObjeto.put("modelo", lerTeclado2.nextLine());
-                    carroObjeto.put("ano", Integer.parseInt(lerTeclado2.nextLine()));
-                    carroObjeto.put("potencia", Float.parseFloat(lerTeclado2.nextLine()));
-                    carroObjeto.put("carga", Float.parseFloat(lerTeclado2.nextLine()));
-                    carroObjeto.put("complemento", lerTeclado2.nextLine());
-                    
-                    
-                    carro.get(1);
-
-                    
-                    retornadadoscliente =  "Codigo: " + carrorecebido.getCodigo() + " Marca: " +
-                                    carrorecebido.getMarca() + " Modelo:" +
-                                    carrorecebido.getModelo() + " Ano:" +
-                                    carrorecebido.getAno() + " Potencia:" +
-                                    carrorecebido.getPotencia() + " Carga:" +
-                                    carrorecebido.getCarga() + " Complemento:" +
-                                    carrorecebido.getComplemento();
-                    
-                    
-                    
-                    
-                    
+                    carroObjeto.put("codigo", carro.getCodigo());
+                    carroObjeto.put("marca", carro.getMarca());
+                    carroObjeto.put("modelo", carro.getModelo());
+                    carroObjeto.put("ano", carro.getAno());
+                    carroObjeto.put("potencia", carro.getPotencia());
+                    carroObjeto.put("carga", carro.getCarga());
+                    carroObjeto.put("complemento", carro.getComplemento());
                     
                     String dadosEnvio = carroObjeto.toString();
                     System.out.println("dados que serão enviados: " + dadosEnvio);
 
                     envia.writeObject(dadosEnvio);
                     envia.flush();
-                    System.out.println("Dados enviados para o servidor. Aguardando confirmação...");
+                    System.out.println("dados enviados para o cliente!");
 
                     break;
                 }
