@@ -39,8 +39,6 @@ public class ThreadServer extends Thread {
             System.out.println("Thread iniciada!");
             ObjectOutputStream envia = new ObjectOutputStream(cliente.getOutputStream());
             ObjectInputStream recebe = new ObjectInputStream(cliente.getInputStream());
-            DataOutputStream dOut = new DataOutputStream(cliente.getOutputStream());
-            DataInputStream dIn = new DataInputStream(cliente.getInputStream());
 
             //após o cliente se conectar ao servidor, receberá uma mensagem com o menu disponível
             envia.writeObject(msgInicial());
@@ -92,8 +90,7 @@ public class ThreadServer extends Thread {
                     
                     
                     
-                    envia.writeBoolean(verifica);
-                    envia.flush();
+                    
                 }
 
                 case 2: {

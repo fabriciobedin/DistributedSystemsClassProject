@@ -5,22 +5,21 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import br.upf.sd.factory.ConnectionFactory;
-import br.upf.sd.factory.Conexao;
+import br.upf.sd.factory.ConexaoBanco;
 import br.upf.sd.model.Carro;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class CarroDAO extends ConnectionFactory {
+public class CarroDAO {
 
    
     public boolean inserir(Carro carro)
     {
         String sql = "INSERT INTO carro(marca,modelo,ano,potencia,carga,complemento) VALUES(?,?,?,?,?,?)";
         Boolean retorno = false;
-        PreparedStatement pst = Conexao.getPreparedStatement(sql);
+        PreparedStatement pst = ConexaoBanco.getPreparedStatement(sql);
         try {
             pst.setString(1, carro.getMarca());
             pst.setString(2, carro.getModelo());
@@ -37,7 +36,7 @@ public class CarroDAO extends ConnectionFactory {
             Logger.getLogger(br.upf.sd.dao.CarroDAO.class.getName()).log(Level.SEVERE, null, ex);
             retorno = false;
         }finally{
-            fecharConexao(null, pst, null);
+            
             
         }
         
@@ -48,7 +47,7 @@ public class CarroDAO extends ConnectionFactory {
     {
         String sql = "UPDATE carro SET marca=?,modelo=?,ano=?, potencia=?, carga=?, complemento=? where codigo=?";
         Boolean retorno = false;
-        PreparedStatement pst = Conexao.getPreparedStatement(sql);
+        PreparedStatement pst = ConexaoBanco.getPreparedStatement(sql);
         try {
             pst.setString(1, carro.getMarca());
             pst.setString(2, carro.getModelo());
@@ -76,7 +75,7 @@ public class CarroDAO extends ConnectionFactory {
     {
         String sql = "DELETE FROM carro where codigo=?";
         Boolean retorno = false;
-        PreparedStatement pst = Conexao.getPreparedStatement(sql);
+        PreparedStatement pst = ConexaoBanco.getPreparedStatement(sql);
         try {
             pst.setInt(1, carro.getCodigo());
             if(pst.executeUpdate()>0)
@@ -97,7 +96,7 @@ public class CarroDAO extends ConnectionFactory {
          String sql = "SELECT * FROM carro";
         List<br.upf.sd.model.Carro> retorno = new ArrayList<br.upf.sd.model.Carro>();
         
-        PreparedStatement pst = Conexao.getPreparedStatement(sql);
+        PreparedStatement pst = ConexaoBanco.getPreparedStatement(sql);
         try {
            
             
@@ -132,7 +131,7 @@ public class CarroDAO extends ConnectionFactory {
         String sql = "SELECT * FROM carro where codigo=?";
         br.upf.sd.model.Carro retorno = null;
         
-        PreparedStatement pst = Conexao.getPreparedStatement(sql);
+        PreparedStatement pst = ConexaoBanco.getPreparedStatement(sql);
         try {
            
             pst.setInt(1, carro.getCodigo());
