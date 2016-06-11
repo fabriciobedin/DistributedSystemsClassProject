@@ -1,8 +1,8 @@
 package br.upf.sd.tcpclient;
 
-import br.upf.sd.model.Carro;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.FileReader;
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -38,7 +38,8 @@ public class ClientTCP {
         //vai verificar se o ip digitado é válido.
         do {
             System.out.print("--> ");
-            ip = lerTeclado.nextLine();
+//            ip = lerTeclado.nextLine();
+            ip="127.0.0.1";
             testeIP = validarIP(ip);
             if (testeIP == false) {
                 System.out.println("\nxxxxxxxxxxxxxx IP inválido!!! xxxxxxxxxxxxxx");
@@ -51,6 +52,8 @@ public class ClientTCP {
         Socket servidor = new Socket(ip, porta);
         ObjectInputStream recebe = new ObjectInputStream(servidor.getInputStream());
         ObjectOutputStream envia = new ObjectOutputStream(servidor.getOutputStream());
+        DataOutputStream dOut = new DataOutputStream(servidor.getOutputStream());
+        DataInputStream dIn = new DataInputStream(servidor.getInputStream());
 
         //recebe mensagem inicial
         menu = (String) recebe.readObject();
@@ -62,7 +65,7 @@ public class ClientTCP {
             envia.writeInt(operacao);
             envia.flush();
 
-            //vai enviar a operacao para o servidor e aguardar resposta se é valida ou não
+            //vai enviar a operacao para o servidor e aguardar resposta se é válida ou não
             testeOperacao = recebe.readBoolean();
             if (testeOperacao == false) {
                 System.out.println("\nxxxx Operação inválida!! xxxx");
@@ -78,34 +81,48 @@ public class ClientTCP {
             case 1:
                 JSONObject carroObjeto = new JSONObject();
                 System.out.println("\n************ Adicionar Carro ************");
+//                System.out.print("\nDigite o código do Carro: ");
+//                carroObjeto.put("codigo", Integer.parseInt(lerTeclado2.nextLine()));
+//
+//                System.out.print("\nDigite a marca do Carro: ");
+//                carroObjeto.put("marca", lerTeclado2.nextLine());
+//
+//                System.out.print("\nDigite o modelo do Carro: ");
+//                carroObjeto.put("modelo", lerTeclado2.nextLine());
+//
+//                System.out.print("\nDigite o ano do Carro: ");
+//                carroObjeto.put("ano", Integer.parseInt(lerTeclado2.nextLine()));
+//
+//                System.out.print("\nDigite o potencia do Carro: ");
+//                carroObjeto.put("potencia", Float.parseFloat(lerTeclado2.nextLine()));
+//
+//                System.out.print("\nDigite o carga do Carro: ");
+//                carroObjeto.put("carga", Float.parseFloat(lerTeclado2.nextLine()));
+//
+//                System.out.print("\nDigite o complemento: ");
+//                carroObjeto.put("complemento", lerTeclado2.nextLine());
                 System.out.print("\nDigite o código do Carro: ");
-                carroObjeto.put("codigo", Integer.parseInt(lerTeclado2.nextLine()));
-
+                carroObjeto.put("codigo", "120");
                 System.out.print("\nDigite a marca do Carro: ");
-                carroObjeto.put("marca", lerTeclado2.nextLine());
-
+                carroObjeto.put("marca", "Fiat");
                 System.out.print("\nDigite o modelo do Carro: ");
-                carroObjeto.put("modelo", lerTeclado2.nextLine());
-
+                carroObjeto.put("modelo", "Palio");
                 System.out.print("\nDigite o ano do Carro: ");
-                carroObjeto.put("ano", Integer.parseInt(lerTeclado2.nextLine()));
-
+                carroObjeto.put("ano", "2012");
                 System.out.print("\nDigite o potencia do Carro: ");
-                carroObjeto.put("potencia", Float.parseFloat(lerTeclado2.nextLine()));
-
+                carroObjeto.put("potencia", "120");
                 System.out.print("\nDigite o carga do Carro: ");
-                carroObjeto.put("carga", Float.parseFloat(lerTeclado2.nextLine()));
-
+                carroObjeto.put("carga", "180");
                 System.out.print("\nDigite o complemento: ");
-                carroObjeto.put("complemento", lerTeclado2.nextLine());
+                carroObjeto.put("complemento", "Branco");
 
-                String dadosEnvio = carroObjeto.toString();
-                System.out.println("dados que serão enviados: " + dadosEnvio);
-
-                envia.writeObject(dadosEnvio);
+                envia.writeObject(carroObjeto.toString());
+                System.out.println(carroObjeto);
+                
                 envia.flush();
                 System.out.println("Dados enviados para o servidor. Aguardando confirmação...");
 
+                
                 verifica = recebe.readBoolean();
                 if (verifica == true) {
                     System.out.println("\n\n*********** Carro adicionado com sucesso! ***********");

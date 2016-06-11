@@ -5,14 +5,13 @@
  */
 package br.upf.sd.model;
 
-import java.util.Objects;
 
 /**
  *
  * @author fabricio
  */
 public class Carro {
-    private int codigo;
+    private Integer codigo;
     private String marca;
     private String modelo;
     private Integer ano;
@@ -108,61 +107,11 @@ public class Carro {
         this.complemento = complemento;
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 29 * hash + this.codigo;
-        hash = 29 * hash + Objects.hashCode(this.marca);
-        hash = 29 * hash + Objects.hashCode(this.modelo);
-        hash = 29 * hash + Objects.hashCode(this.ano);
-        hash = 29 * hash + Objects.hashCode(this.potencia);
-        hash = 29 * hash + Objects.hashCode(this.carga);
-        hash = 29 * hash + Objects.hashCode(this.complemento);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Carro other = (Carro) obj;
-        if (this.codigo != other.codigo) {
-            return false;
-        }
-        if (!Objects.equals(this.marca, other.marca)) {
-            return false;
-        }
-        if (!Objects.equals(this.modelo, other.modelo)) {
-            return false;
-        }
-        if (!Objects.equals(this.ano, other.ano)) {
-            return false;
-        }
-        if (!Objects.equals(this.potencia, other.potencia)) {
-            return false;
-        }
-        if (!Objects.equals(this.carga, other.carga)) {
-            return false;
-        }
-        if (!Objects.equals(this.complemento, other.complemento)) {
-            return false;
-        }
-        return true;
-    }
-
     
     @Override
     public String toString() {
-        return   "Codigo: "+ this.getCodigo() + " Marca: " + this.getMarca() + " Modelo: " + 
-                this.getModelo() + " Ano: " + this.getAno() + " Carga: " + this.getCarga() + " Potencia: " + this.getPotencia() + " Complemento: " + this.getComplemento() + "\n";
-        //return super.toString(); //To change body of generated methods, choose Tools | Templates.
+        return   "Codigo: "+ this.getCodigo() + "\nMarca: " + this.getMarca() + "\nModelo: " + 
+                this.getModelo() + "\nAno: " + this.getAno() + "\nCarga: " + this.getCarga() + "\nPotencia: " + this.getPotencia() + "\nComplemento: " + this.getComplemento() + "\n";
     }
     
     

@@ -7,6 +7,8 @@ package br.upf.sd.tcpserver;
 
 import br.upf.sd.dao.CarroDAO;
 import br.upf.sd.model.Carro;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -37,6 +39,8 @@ public class ThreadServer extends Thread {
             System.out.println("Thread iniciada!");
             ObjectOutputStream envia = new ObjectOutputStream(cliente.getOutputStream());
             ObjectInputStream recebe = new ObjectInputStream(cliente.getInputStream());
+            DataOutputStream dOut = new DataOutputStream(cliente.getOutputStream());
+            DataInputStream dIn = new DataInputStream(cliente.getInputStream());
 
             //após o cliente se conectar ao servidor, receberá uma mensagem com o menu disponível
             envia.writeObject(msgInicial());
@@ -69,11 +73,10 @@ public class ThreadServer extends Thread {
                 case 1: {
                     //adicionar
                     Carro carro = new Carro();
-
-                    JSONObject carroObject = new JSONObject(recebe.readObject());
-
-                    System.out.println(carroObject.toString());
-
+                    JSONObject carroObject = new JSONObject(recebe.readObject().toString());
+                    
+                    System.out.println(carroObject);
+                    
                     carro.setCodigo(Integer.parseInt(carroObject.getString("codigo")));
                     carro.setMarca(carroObject.getString("marca"));
                     carro.setModelo(carroObject.getString("modelo"));
@@ -83,8 +86,12 @@ public class ThreadServer extends Thread {
                     carro.setComplemento(carroObject.getString("complemento"));
 
                     System.out.println(carro.toString());
-
-                    verifica = CarroDAO.getInstance().adicionarCarro(carro);
+                    
+                    CarroDAO dao = new CarroDAO();
+                    dao.inserir(carro);
+                    
+                    
+                    
                     envia.writeBoolean(verifica);
                     envia.flush();
                 }

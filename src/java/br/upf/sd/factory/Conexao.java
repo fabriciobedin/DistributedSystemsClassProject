@@ -9,6 +9,7 @@ package br.upf.sd.factory;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
@@ -79,6 +80,28 @@ public class Conexao {
                     e.getMessage());
         }
         return null;
+    }
+    
+    /**
+     * metodo responsavel por fechar a conexao com o banco
+     * @author Fabricio Bedin
+     * @param conexao
+     * @param pstmt
+     */
+    public void fecharConexao(Connection conexao, PreparedStatement pstmt) {
+
+        try {
+
+            if (conexao != null) {
+                conexao.close();
+            }
+            if (pstmt != null) {
+                pstmt.close();
+            }
+         
+        } catch (Exception e) {
+            System.out.println("Erro ao fechar conexao com o banco: "+ e);
+        }
     }
     
 }

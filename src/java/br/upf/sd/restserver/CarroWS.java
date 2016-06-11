@@ -18,7 +18,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PUT;
 import javax.ws.rs.PathParam;
-import br.upf.sd.model.CarroRest;
+import br.upf.sd.model.Carro;
 
 /**
  * REST Web Service
@@ -40,7 +40,7 @@ public class CarroWS {
     @Path("Carro/get/{codigo}")
     public String getCarro(@PathParam("codigo") int codigo)
     {
-        CarroRest u = new CarroRest();
+        Carro u = new Carro();
         u.setCodigo(codigo);
         
         CarroDAO dao = new CarroDAO();
@@ -55,7 +55,7 @@ public class CarroWS {
     @Path("Carro/list")
     public String listCarro()
     {
-        List<CarroRest> lista;
+        List<Carro> lista;
         
         CarroDAO dao = new CarroDAO();
         lista = dao.listar();
@@ -69,7 +69,7 @@ public class CarroWS {
     @Path("Carro/atualizar")
     public String atualizar (String content) {
     Gson g = new Gson();
-        CarroRest u = (CarroRest) g.fromJson(content, CarroRest.class);
+        Carro u = (Carro) g.fromJson(content, Carro.class);
         
         CarroDAO dao = new CarroDAO();
         dao.atualizar(u);
@@ -84,7 +84,7 @@ public class CarroWS {
     public String inserir (String content) {
         
         Gson g = new Gson();
-        CarroRest u = (CarroRest) g.fromJson(content, CarroRest.class);
+        Carro u = (Carro) g.fromJson(content, Carro.class);
         
         CarroDAO dao = new CarroDAO();
         dao.inserir(u);
@@ -98,7 +98,7 @@ public class CarroWS {
     @Consumes("application/json")
     public String excluir(@PathParam("codigo") int codigo)
     {
-        CarroRest u = new CarroRest();
+        Carro u = new Carro();
         u.setCodigo(codigo);
         
         CarroDAO dao = new CarroDAO();
