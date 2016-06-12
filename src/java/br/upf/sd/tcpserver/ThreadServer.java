@@ -1,22 +1,20 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.upf.sd.tcpserver;
 
 import br.upf.sd.dao.CarroDAO;
 import br.upf.sd.model.Carro;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.util.ArrayList;
-import org.json.JSONArray;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.simple.JSONArray;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 /**
  *
@@ -24,7 +22,11 @@ import org.json.JSONObject;
  */
 public class ThreadServer extends Thread {
 
-    private Socket cliente;
+    private final Socket cliente;
+    private ObjectOutputStream envia;
+    private ObjectInputStream recebe;
+    private boolean testeOperacao;
+    boolean verifica = false;
 
     public ThreadServer(Socket cliente) {
         this.cliente = cliente;
@@ -32,24 +34,64 @@ public class ThreadServer extends Thread {
 
     public void run() {
         int operacao;
-        boolean testeOperacao;
-        boolean verifica;
+        System.out.println("Thread iniciada!");
+        enviaMenu();
+        operacao = recebeOperacao();
 
+        switch (operacao) {
+            case 1: {
+                System.out.println("adicionando..");
+                adicionar();
+                break;
+            }
+            case 2: {
+                listarTodos();
+                break;
+            }
+            case 3: {
+                consultar();
+                break;
+            }
+            case 4: {
+                consultarAnoModelo();
+                break;
+            }
+            case 5: {
+                alterar();
+                break;
+            }
+            case 6: {
+                apagar();
+                break;
+            }
+            case 7: {
+                sair();
+            }
+        }
+    }
+
+    public void enviaMenu() {
+        instObjetos();
         try {
-            System.out.println("Thread iniciada!");
-            ObjectOutputStream envia = new ObjectOutputStream(cliente.getOutputStream());
-            ObjectInputStream recebe = new ObjectInputStream(cliente.getInputStream());
-
-            //após o cliente se conectar ao servidor, receberá uma mensagem com o menu disponível
-            envia.writeObject(msgInicial());
+            envia.writeObject(menu());
             envia.flush();
-            System.out.println("String com menu enviada para cliente!");
+        } catch (IOException ex) {
+            System.out.println("Erro ao enviar o menu");
+            ex.printStackTrace();
+        }
+        System.out.println("String com menu enviada para cliente!");
+    }
+
+    public Integer recebeOperacao() {
+        Integer operacao = 0;
+        try {
 
             do {
                 //servidor aguarda resposta com a operacao que o cliente selecionar
                 System.out.println("Aguardando cliente...");
+
                 operacao = recebe.readInt();
-                System.out.println("Mensagem recebida com a operação " + operacao);
+                System.out.println("Mensagem recebida com a operação " + operacao + " - " + ServerTCP.getDataHora());
 
                 //vai verificar se a operação informada existe no servidor
                 //caso a operacção não exista, o cliente será informado e
@@ -66,95 +108,11 @@ public class ThreadServer extends Thread {
                     System.out.println("Respondendo: operação inválida!");
                 }
             } while (testeOperacao == false);
-
-            switch (operacao) {
-                case 1: {
-                    //adicionar
-                    Carro carro = new Carro();
-                    JSONObject carroObject = new JSONObject(recebe.readObject().toString());
-                    
-                    System.out.println(carroObject);
-                    
-                    carro.setCodigo(Integer.parseInt(carroObject.getString("codigo")));
-                    carro.setMarca(carroObject.getString("marca"));
-                    carro.setModelo(carroObject.getString("modelo"));
-                    carro.setAno(Integer.parseInt(carroObject.getString("ano")));
-                    carro.setPotencia(Float.parseFloat(carroObject.getString("potencia")));
-                    carro.setCarga(Float.parseFloat(carroObject.getString("carga")));
-                    carro.setComplemento(carroObject.getString("complemento"));
-
-                    System.out.println(carro.toString());
-                    
-                    CarroDAO dao = new CarroDAO();
-                    dao.inserir(carro);
-                    
-                    
-                    
-                    
-                }
-
-                case 2: {
-                    //alterar
-                    break;
-                }
-
-                case 3: {
-                    //excluir
-                    int codApagar = recebe.readInt();
-                    System.out.println("Apagando carro com o código: " + codApagar);
-                    verifica = CarroDAO.getInstance().apagarCarro(codApagar);
-                    envia.writeBoolean(verifica);
-                    System.out.println("Confirmação enviada para cliente!");
-                    break;
-                }
-
-                case 4: {
-                    //consultar
-                    int codListar = recebe.readInt();
-                    System.out.println("Consultando carro com o código: " + codListar);
-                    
-                    Carro carro = CarroDAO.getInstance().listarCodigo(codListar);
-                    
-                    JSONObject carroObjeto = new JSONObject();
-                    carroObjeto.put("codigo", carro.getCodigo());
-                    carroObjeto.put("marca", carro.getMarca());
-                    carroObjeto.put("modelo", carro.getModelo());
-                    carroObjeto.put("ano", carro.getAno());
-                    carroObjeto.put("potencia", carro.getPotencia());
-                    carroObjeto.put("carga", carro.getCarga());
-                    carroObjeto.put("complemento", carro.getComplemento());
-                    
-                    String dadosEnvio = carroObjeto.toString();
-                    System.out.println("dados que serão enviados: " + dadosEnvio);
-
-                    envia.writeObject(dadosEnvio);
-                    envia.flush();
-                    System.out.println("dados enviados para o cliente!");
-
-                    break;
-                }
-
-                case 5: {
-                    //ano-modelo
-                    break;
-                }
-                case 6: {
-                    recebe.close();
-                    envia.close();
-                    cliente.close();
-                    Thread.currentThread().stop();
-                    break;
-                }
-
-            }
-        } catch (Exception e) {
-            System.out.println("Excecao ocorrida na thread: " + e.getMessage());
-            try {
-                cliente.close();
-            } catch (Exception ec) {
-            }
+        } catch (IOException ex) {
+            System.out.println("Erro ao receber operação! ");
+            ex.printStackTrace();
         }
-
+        return operacao;
     }
 
     /**
@@ -163,11 +121,13 @@ public class ThreadServer extends Thread {
      *
      * @return String
      */
-    public String msgInicial() {
+    public String menu() {
         String ipServer = "anônimo";
         try {
             ipServer = InetAddress.getLocalHost().getHostAddress();
         } catch (Exception e) {
+            System.out.println("Erro ao obter o endereço IP ");
+            e.printStackTrace();
         }
 
         String menu = (""
@@ -177,11 +137,13 @@ public class ThreadServer extends Thread {
                 + "**                                                                                      **\n"
                 + "**                     Digite abaixo o número da opção desejada                         **\n"
                 + "**                                                                                      **\n"
-                + "**                  1 - Adicionar                     4 - Consultar                     **\n"
+                + "**                  1 - Adicionar                     4 - Ano/modelo                    **\n"
                 + "**                                                                                      **\n"
-                + "**                  2 - Alterar                       5 - Ano/modelo                    **\n"
+                + "**                  2 - Listar Todos                  5 - Alterar                       **\n"
                 + "**                                                                                      **\n"
-                + "**                  3 - Apagar                        6 - Sair                          **\n"
+                + "**                  3 - Consultar                     6 - Apagar                        **\n"
+                + "**                                                                                      **\n"
+                + "**                                     7 - Sair                                         **\n"
                 + "**                                                                                      **\n"
                 + "******************************************************************************************\n");
 
@@ -199,11 +161,142 @@ public class ThreadServer extends Thread {
      */
     public static boolean validaOperacao(int operacao) {
         boolean retorno;
-        if (operacao >= 7 || operacao <= 0) {
+        if (operacao >= 8 || operacao <= 0) {
             retorno = false;
         } else {
             retorno = true;
         }
         return retorno;
     }
+
+    public void instObjetos() {
+        try {
+            envia = new ObjectOutputStream(cliente.getOutputStream());
+            recebe = new ObjectInputStream(cliente.getInputStream());
+        } catch (IOException ex) {
+            System.out.println("Erro ao instanciar um ObjetcOutputStream! ");
+            ex.printStackTrace();
+        }
+    }
+
+    public void adicionar() {
+        try {
+            
+
+//            carro.setCodigo(Integer.parseInt(carroObjeto.getString("codigo")));
+//            carro.setMarca(carroObjeto.getString("marca"));
+//            carro.setModelo(carroObjeto.getString("modelo"));
+//            carro.setAno(Integer.parseInt(carroObjeto.getString("ano")));
+//            carro.setPotencia(Float.parseFloat(carroObjeto.getString("potencia")));
+//            carro.setCarga(Float.parseFloat(carroObjeto.getString("carga")));
+//            carro.setComplemento(carroObjeto.getString("complemento"));
+//            System.out.println(carro);
+//            CarroDAO dao = new CarroDAO();
+//            dao.inserir(carro);
+//            System.out.println("carro inserido no banco!");
+            Carro carro = new Carro();
+            JSONObject carroObjeto = new JSONObject(recebe.readObject());
+            carroObjeto.toString();
+            System.out.println(carroObjeto);
+            
+            String codigoo = (String) carroObjeto.get("codigo");
+            System.out.println(codigoo);
+            
+            JSONParser parser = new JSONParser();
+
+            JSONArray carroJArray = null;
+
+            carroJArray = (JSONArray) parser.parse(new FileReader("saida.json"));
+
+            for (Object o : carroJArray) {
+                JSONObject object = (JSONObject) o;
+                String codigo = (String) object.get("codigo");
+                System.out.println(codigo);
+
+                String city = (String) object.get("city");
+                System.out.println(city);
+
+                String job = (String) object.get("job");
+                System.out.println(job);
+
+                JSONArray cars = (JSONArray) object.get("cars");
+
+                for (Object c : cars) {
+                    System.out.println(c + "");
+                }
+
+            }
+
+        } catch (IOException ex) {
+            Logger.getLogger(ThreadServer.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(ThreadServer.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (JSONException ex) {
+
+        } catch (ParseException ex) {
+            Logger.getLogger(ThreadServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void listarTodos() {
+
+    }
+
+    public void consultar() {
+        try {
+            int codListar;
+            codListar = recebe.readInt();
+            System.out.println("Consultando carro com o código: " + codListar);
+            CarroDAO dao = new CarroDAO();
+            Carro carro = new Carro();
+            carro = dao.buscarCod(codListar);
+            JSONObject carroObjeto = new JSONObject();
+            carroObjeto.put("codigo", carro.getCodigo());
+            carroObjeto.put("marca", carro.getMarca());
+            carroObjeto.put("modelo", carro.getModelo());
+            carroObjeto.put("ano", carro.getAno());
+            carroObjeto.put("potencia", carro.getPotencia());
+            carroObjeto.put("carga", carro.getCarga());
+            carroObjeto.put("complemento", carro.getComplemento());
+            envia.writeObject(carroObjeto.toString());
+
+        } catch (IOException ex) {
+            Logger.getLogger(ThreadServer.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (JSONException ex) {
+            Logger.getLogger(ThreadServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void consultarAnoModelo() {
+
+    }
+
+    public void alterar() {
+
+    }
+
+    public void apagar() {
+        int codApagar;
+        try {
+            codApagar = recebe.readInt();
+            System.out.println("Apagando carro com o código: " + codApagar);
+            CarroDAO dao = new CarroDAO();
+            verifica = dao.apagarCod(codApagar);
+            envia.writeBoolean(verifica);
+            System.out.println("Confirmação enviada para cliente!");
+        } catch (IOException ex) {
+            Logger.getLogger(ThreadServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void sair() {
+        try {
+            recebe.close();
+            envia.close();
+
+        } catch (IOException ex) {
+            Logger.getLogger(ThreadServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
 }

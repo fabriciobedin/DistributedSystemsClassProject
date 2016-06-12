@@ -23,6 +23,7 @@ public class ServerTCP{
             ServerSocket servidor = new ServerSocket(porta);
             
             
+            
             while (conectado) {
                 System.out.println("servidor executando, porta " + porta + " aberta!! " + getDataHora());
                 Socket cliente = servidor.accept();
