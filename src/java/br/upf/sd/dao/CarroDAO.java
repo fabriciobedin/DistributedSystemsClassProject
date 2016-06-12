@@ -1,7 +1,5 @@
 package br.upf.sd.dao;
 
-import br.upf.sd.factory.ConexaoBanco;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -43,7 +41,7 @@ public class CarroDAO {
         return retorno;
     
     }
-    public boolean atualizar(br.upf.sd.model.Carro carro)
+    public boolean atualizar(Carro carro)
     {
         String sql = "UPDATE carro SET marca=?,modelo=?,ano=?, potencia=?, carga=?, complemento=? where codigo=?";
         Boolean retorno = false;
@@ -71,7 +69,7 @@ public class CarroDAO {
         return retorno;
     
     }
-    public boolean excluir(br.upf.sd.model.Carro carro)
+    public boolean excluir(Carro carro)
     {
         String sql = "DELETE FROM carro where codigo=?";
         Boolean retorno = false;
@@ -91,45 +89,35 @@ public class CarroDAO {
     
     }
     
-    public List<br.upf.sd.model.Carro> listar()
-    {
-         String sql = "SELECT * FROM carro";
-        List<br.upf.sd.model.Carro> retorno = new ArrayList<br.upf.sd.model.Carro>();
+    public List<Carro> listar(){
+        String sql = "SELECT * FROM carro";
+        List<Carro> retorno = new ArrayList();
         
         PreparedStatement pst = ConexaoBanco.getPreparedStatement(sql);
         try {
-           
-            
             ResultSet res = pst.executeQuery();
             while(res.next())
             {
-                br.upf.sd.model.Carro item = new br.upf.sd.model.Carro();
-                item.setCodigo(res.getInt("codigo"));
-                item.setMarca(res.getString("marca"));
-                item.setModelo(res.getString("modelo"));
-                item.setAno(res.getInt("ano"));
-                item.setPotencia(res.getFloat("potencia"));
-                item.setCarga(res.getFloat("carga"));
-                item.setComplemento(res.getString("complemento"));
-                
-                retorno.add(item);
-            }
-               
-            
-            
+                Carro carro = new Carro();
+                carro.setCodigo(res.getInt("codigo"));
+                carro.setMarca(res.getString("marca"));
+                carro.setModelo(res.getString("modelo"));
+                carro.setAno(res.getInt("ano"));
+                carro.setPotencia(res.getFloat("potencia"));
+                carro.setCarga(res.getFloat("carga"));
+                carro.setComplemento(res.getString("complemento"));
+                retorno.add(carro);
+            }  
         } catch (SQLException ex) {
             Logger.getLogger(br.upf.sd.dao.CarroDAO.class.getName()).log(Level.SEVERE, null, ex);
             
         }
-        
         return retorno;
-    
-    
     }
-    public br.upf.sd.model.Carro buscar(br.upf.sd.model.Carro carro)
-    {
+    
+    public Carro buscar(Carro carro){
         String sql = "SELECT * FROM carro where codigo=?";
-        br.upf.sd.model.Carro retorno = null;
+        Carro retorno = null;
         
         PreparedStatement pst = ConexaoBanco.getPreparedStatement(sql);
         try {
@@ -142,7 +130,7 @@ public class CarroDAO {
                 
             {
                 
-                retorno = new br.upf.sd.model.Carro();
+                retorno = new Carro();
                 retorno.setCodigo(res.getInt("codigo"));
                 retorno.setMarca(res.getString("marca"));
                 retorno.setModelo(res.getString("modelo"));
@@ -160,6 +148,59 @@ public class CarroDAO {
         return retorno;
    
     }
+    
+    public boolean apagarCod(int codigo)
+    {
+        String sql = "DELETE FROM carro where codigo=?";
+        Boolean retorno = false;
+        PreparedStatement pst = ConexaoBanco.getPreparedStatement(sql);
+        try {
+            pst.setInt(1, codigo);
+            if(pst.executeUpdate()>0)
+            {
+                retorno = true;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(br.upf.sd.dao.CarroDAO.class.getName()).log(Level.SEVERE, null, ex);
+            retorno = false;
+        }
+        
+        return retorno;
+    }
+    
+    public Carro buscarCod(int codigo)
+    {
+        String sql = "SELECT * FROM carro where codigo=?";
+        Carro retorno = null;
+        
+        PreparedStatement pst = ConexaoBanco.getPreparedStatement(sql);
+        try {
+           
+            pst.setInt(1, codigo);
+            ResultSet res = pst.executeQuery();
+            if(res.next())               
+            {
+                retorno = new Carro();
+                retorno.setCodigo(res.getInt("codigo"));
+                retorno.setMarca(res.getString("marca"));
+                retorno.setModelo(res.getString("modelo"));
+                retorno.setAno(res.getInt("ano"));
+                retorno.setPotencia(res.getFloat("potencia"));
+                retorno.setCarga(res.getFloat("carga"));
+                retorno.setComplemento(res.getString("complemento"));
+            }
+        
+        } catch (SQLException ex) {
+            Logger.getLogger(br.upf.sd.dao.CarroDAO.class.getName()).log(Level.SEVERE, null, ex);
+            
+        }
+        
+        return retorno;
+   
+    }
+    
+    
+    
     
 //    
 //    
