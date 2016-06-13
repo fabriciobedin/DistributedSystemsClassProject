@@ -1,6 +1,6 @@
 package br.upf.sd.tcpclient;
 
-import java.io.FileReader;
+import br.upf.sd.model.Carro;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -10,8 +10,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.simple.JSONArray;
-import org.json.simple.parser.JSONParser;
 
 /**
  *
@@ -29,12 +27,7 @@ public class ClientTCP {
     private static String menu;
     private static Integer operacao;
 
-    public static void main(String[] args) throws Exception {
-        
-        
-        Scanner lerTeclado3 = new Scanner(System.in);
-        Scanner lerTeclado4 = new Scanner(System.in);
-
+    public static void main(String[] args) {
         System.out.println("Olá, informe o endereço IP do servidor que deseja conectar e tecle enter.");
         pegaIp();
         conectaServidor();
@@ -42,119 +35,72 @@ public class ClientTCP {
         testaEnviaOperacao();
 
         switch (operacao) {
-            case 1:
+            case 1: {
                 adicionar();
                 break;
-
+            }
             case 2: {
-                //alterar
-
+                listarTodos();
+                break;
             }
             case 3: {
-                //excluir
-                System.out.println("\n************ Excluir Carro ************");
-                System.out.print("Informe o código do carro: ");
-                envia.writeInt(Integer.parseInt(lerTeclado.nextLine()));
-                System.out.println("Solicitação enviada para o servidor. Aguardando confirmação...");
-
-                verifica = recebe.readBoolean();
-                if (verifica == true) {
-                    System.out.println("\n\n*********** Carro apagado com sucesso! ***********");
-                } else {
-                    System.out.println("\n\nxxxxxxxxxxx ERRO! Carro não apagado xxxxxxxxxxx");
-                    System.out.println("Deseja tentar adicionar novamente? (s/n)");
-                }
-
+                consultar();
                 break;
             }
-
             case 4: {
-                //consultarPorCodigo
-                System.out.println("\n************ Consultar Carro ************");
-                System.out.print("Informe o código do carro: ");
-                envia.writeInt(Integer.parseInt(lerTeclado4.nextLine()));
-
-//                Carro carro = new Carro();
-//
-//                JSONObject carroObject = new JSONObject(recebe.readObject());
-//
-//                System.out.println(carroObject.toString());
-//
-//                carro.setCodigo(Integer.parseInt(carroObject.getString("codigo")));
-//                carro.setMarca(carroObject.getString("marca"));
-//                carro.setModelo(carroObject.getString("modelo"));
-//                carro.setAno(Integer.parseInt(carroObject.getString("ano")));
-//                carro.setPotencia(Float.parseFloat(carroObject.getString("potencia")));
-//                carro.setCarga(Float.parseFloat(carroObject.getString("carga")));
-//                carro.setComplemento(carroObject.getString("complemento"));
-//
-//                System.out.println("\n************ Carro recebido ************");
-//                System.out.println("Codigo:" + carro.getCodigo());
-//                System.out.println("Marca:" + carro.getMarca());
-//                System.out.println("Modelo:" + carro.getModelo());
-//                System.out.println("Ano:" + carro.getAno());
-//                System.out.println("Potencia:" + carro.getPotencia());
-//                System.out.println("Carga:" + carro.getCarga());
-//                System.out.println("Complemento:" + carro.getComplemento());
-//                System.out.println("------------------------------");
-                JSONParser parser = new JSONParser();
-
-                JSONArray carroJArray = (JSONArray) parser.parse(new FileReader("saida.json"));
-
-                for (Object o : carroJArray) {
-                    JSONObject object = (JSONObject) o;
-
-                    String name = (String) object.get("name");
-                    System.out.println(name);
-
-                    String city = (String) object.get("city");
-                    System.out.println(city);
-
-                    String job = (String) object.get("job");
-                    System.out.println(job);
-
-                    JSONArray cars = (JSONArray) object.get("cars");
-
-                    for (Object c : cars) {
-                        System.out.println(c + "");
-                    }
-
-                }
-
+                consultarAnoModelo();
                 break;
             }
-
             case 5: {
-                //ano-modelo
+                alterar();
                 break;
             }
-
+            case 6: {
+                apagar();
+                break;
+            }
+            case 7: {
+                sair();
+                break;
+            }
         }
-
     }
 
     public static void adicionar() {
         try {
-            JSONObject carroObjeto = new JSONObject();
+            Carro carro = new Carro();
             System.out.println("\n************ Adicionar Carro ************");
             System.out.print("\nDigite o código do Carro: ");
-            carroObjeto.put("codigo", Integer.parseInt(lerTeclado2.nextLine()));
+            carro.setCodigo(Integer.parseInt(lerTeclado2.nextLine()));
+
             System.out.print("\nDigite a marca do Carro: ");
-            carroObjeto.put("marca", lerTeclado2.nextLine());
+            carro.setMarca(lerTeclado2.nextLine());
+
             System.out.print("\nDigite o modelo do Carro: ");
-            carroObjeto.put("modelo", lerTeclado2.nextLine());
+            carro.setModelo(lerTeclado2.nextLine());
+
             System.out.print("\nDigite o ano do Carro: ");
-            carroObjeto.put("ano", Integer.parseInt(lerTeclado2.nextLine()));
+            carro.setAno(Integer.parseInt(lerTeclado2.nextLine()));
+
             System.out.print("\nDigite o potencia do Carro: ");
-            carroObjeto.put("potencia", Float.parseFloat(lerTeclado2.nextLine()));
+            carro.setPotencia(Float.parseFloat(lerTeclado2.nextLine()));
+
             System.out.print("\nDigite o carga do Carro: ");
-            carroObjeto.put("carga", Float.parseFloat(lerTeclado2.nextLine()));
+            carro.setCarga(Float.parseFloat(lerTeclado2.nextLine()));
+
             System.out.print("\nDigite o complemento: ");
-            carroObjeto.put("complemento", lerTeclado2.nextLine());
+            carro.setComplemento(lerTeclado2.nextLine());
 
-            envia.writeObject(carroObjeto.toString());
-            System.out.println(carroObjeto);
+            String enviarDados
+                    = carro.getCodigo() + ":"
+                    + carro.getMarca() + ":"
+                    + carro.getModelo() + ":"
+                    + carro.getAno() + ":"
+                    + carro.getPotencia() + ":"
+                    + carro.getCarga() + ":"
+                    + carro.getComplemento();
 
+            envia.writeObject(enviarDados);
             envia.flush();
             System.out.println("Dados enviados para o servidor. Aguardando confirmação...");
 
@@ -163,19 +109,131 @@ public class ClientTCP {
                 System.out.println("\n\n*********** Carro adicionado com sucesso! ***********");
             } else {
                 System.out.println("\n\nxxxxxxxxxxx ERRO! Carro não adicionado xxxxxxxxxxx");
-                System.out.println("Deseja tentar adicionar novamente? (s/n)");
             }
-        } catch (JSONException ex) {
-            Logger.getLogger(ClientTCP.class.getName()).log(Level.SEVERE, null, ex);
+//       
         } catch (IOException ex) {
             Logger.getLogger(ClientTCP.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
 
-    public static void conectaServidor() {
-        //após informar um ip no formato válido, vai tentar se conectar ao servidor.
+    public static void listarTodos() {
+        try {
+            
+            String dadosRecebidos = recebe.readObject().toString();
+            System.out.println(dadosRecebidos);
+       
+        } catch (IOException ex) {
+            Logger.getLogger(ClientTCP.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(ClientTCP.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
+    }
+
+    public static void consultar() {
+        //consultarPorCodigo
+        try {
+            System.out.println("\n************ Consultar Carro ************");
+            System.out.print("Informe o código do carro: ");
+
+            envia.writeInt(Integer.parseInt(lerTeclado2.nextLine()));
+
+            Carro carro = new Carro();
+
+            JSONObject carroObject = new JSONObject(recebe.readObject());
+
+            System.out.println(carroObject.toString());
+
+            carro.setCodigo(Integer.parseInt(carroObject.getString("codigo")));
+            carro.setMarca(carroObject.getString("marca"));
+            carro.setModelo(carroObject.getString("modelo"));
+            carro.setAno(Integer.parseInt(carroObject.getString("ano")));
+            carro.setPotencia(Float.parseFloat(carroObject.getString("potencia")));
+            carro.setCarga(Float.parseFloat(carroObject.getString("carga")));
+            carro.setComplemento(carroObject.getString("complemento"));
+
+            System.out.println("\n************ Carro recebido ************");
+            System.out.println("Codigo:" + carro.getCodigo());
+            System.out.println("Marca:" + carro.getMarca());
+            System.out.println("Modelo:" + carro.getModelo());
+            System.out.println("Ano:" + carro.getAno());
+            System.out.println("Potencia:" + carro.getPotencia());
+            System.out.println("Carga:" + carro.getCarga());
+            System.out.println("Complemento:" + carro.getComplemento());
+            System.out.println("------------------------------");
+
+//                JSONParser parser = new JSONParser();
+//
+//                JSONArray carroJArray = (JSONArray) parser.parse(new FileReader("saida.json"));
+//
+//                for (Object o : carroJArray) {
+//                    JSONObject object = (JSONObject) o;
+//
+//                    String name = (String) object.get("name");
+//                    System.out.println(name);
+//
+//                    String city = (String) object.get("city");
+//                    System.out.println(city);
+//
+//                    String job = (String) object.get("job");
+//                    System.out.println(job);
+//
+//                    JSONArray cars = (JSONArray) object.get("cars");
+//
+//                    for (Object c : cars) {
+//                        System.out.println(c + "");
+//                    }
+//
+//                }
+        } catch (IOException ex) {
+            Logger.getLogger(ClientTCP.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(ClientTCP.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (JSONException ex) {
+            Logger.getLogger(ClientTCP.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public static void consultarAnoModelo() {
+
+    }
+
+    public static void alterar() {
+
+    }
+
+    public static void apagar() {
+        try {
+            System.out.println("\n************ Excluir Carro ************");
+            System.out.print("Informe o código do carro: ");
+
+            envia.writeInt(Integer.parseInt(lerTeclado.nextLine()));
+
+            System.out.println("Solicitação enviada para o servidor. Aguardando confirmação...");
+
+            verifica = recebe.readBoolean();
+            if (verifica == true) {
+                System.out.println("\n\n*********** Carro apagado com sucesso! ***********");
+            } else {
+                System.out.println("\n\nxxxxxxxxxxx ERRO! Carro não apagado xxxxxxxxxxx");
+                System.out.println("Deseja tentar adicionar novamente? (s/n)");
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(ClientTCP.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public static void sair() {
+        try {
+            recebe.close();
+            envia.close();
+        } catch (IOException ex) {
+            Logger.getLogger(ClientTCP.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public static void conectaServidor() {
         try {
             Socket servidor = new Socket(ip, porta);
             recebe = new ObjectInputStream(servidor.getInputStream());
@@ -183,11 +241,9 @@ public class ClientTCP {
         } catch (IOException ex) {
             Logger.getLogger(ClientTCP.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
 
     public static void pegaIp() {
-        //vai verificar se o ip digitado é válido.
         boolean testeIP;
         do {
             System.out.print("--> ");
@@ -220,7 +276,7 @@ public class ClientTCP {
                 operacao = lerTeclado.nextInt();
                 envia.writeInt(operacao);
                 envia.flush();
-                
+
                 //vai enviar a operacao para o servidor e aguardar resposta se é válida ou não
                 testeOperacao = recebe.readBoolean();
                 if (testeOperacao == false) {

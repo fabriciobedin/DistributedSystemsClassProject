@@ -8,6 +8,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.JSONException;
@@ -23,24 +24,26 @@ import org.json.simple.parser.ParseException;
 public class ThreadServer extends Thread {
 
     private final Socket cliente;
+    private Integer contThread;
     private ObjectOutputStream envia;
     private ObjectInputStream recebe;
     private boolean testeOperacao;
     boolean verifica = false;
 
-    public ThreadServer(Socket cliente) {
+    public ThreadServer(Socket cliente, Integer contThread) {
         this.cliente = cliente;
+        this.contThread = contThread;
     }
 
+    @Override
     public void run() {
         int operacao;
-        System.out.println("Thread iniciada!");
+        System.out.println("Thread "+ contThread+" iniciada! - " +ServerTCP.getDataHora());
         enviaMenu();
         operacao = recebeOperacao();
 
         switch (operacao) {
             case 1: {
-                System.out.println("adicionando..");
                 adicionar();
                 break;
             }
@@ -77,7 +80,6 @@ public class ThreadServer extends Thread {
             envia.flush();
         } catch (IOException ex) {
             System.out.println("Erro ao enviar o menu");
-            ex.printStackTrace();
         }
         System.out.println("String com menu enviada para cliente!");
     }
@@ -110,7 +112,6 @@ public class ThreadServer extends Thread {
             } while (testeOperacao == false);
         } catch (IOException ex) {
             System.out.println("Erro ao receber operação! ");
-            ex.printStackTrace();
         }
         return operacao;
     }
@@ -127,7 +128,6 @@ public class ThreadServer extends Thread {
             ipServer = InetAddress.getLocalHost().getHostAddress();
         } catch (Exception e) {
             System.out.println("Erro ao obter o endereço IP ");
-            e.printStackTrace();
         }
 
         String menu = (""
@@ -161,11 +161,7 @@ public class ThreadServer extends Thread {
      */
     public static boolean validaOperacao(int operacao) {
         boolean retorno;
-        if (operacao >= 8 || operacao <= 0) {
-            retorno = false;
-        } else {
-            retorno = true;
-        }
+        retorno = !(operacao >= 8 || operacao <= 0);
         return retorno;
     }
 
@@ -181,65 +177,59 @@ public class ThreadServer extends Thread {
 
     public void adicionar() {
         try {
-            
 
-//            carro.setCodigo(Integer.parseInt(carroObjeto.getString("codigo")));
-//            carro.setMarca(carroObjeto.getString("marca"));
-//            carro.setModelo(carroObjeto.getString("modelo"));
-//            carro.setAno(Integer.parseInt(carroObjeto.getString("ano")));
-//            carro.setPotencia(Float.parseFloat(carroObjeto.getString("potencia")));
-//            carro.setCarga(Float.parseFloat(carroObjeto.getString("carga")));
-//            carro.setComplemento(carroObjeto.getString("complemento"));
-//            System.out.println(carro);
-//            CarroDAO dao = new CarroDAO();
-//            dao.inserir(carro);
-//            System.out.println("carro inserido no banco!");
+            String dadosRecebidos = (String) recebe.readObject();
+            String[] parts = dadosRecebidos.split(":");
             Carro carro = new Carro();
-            JSONObject carroObjeto = new JSONObject(recebe.readObject());
-            carroObjeto.toString();
-            System.out.println(carroObjeto);
-            
-            String codigoo = (String) carroObjeto.get("codigo");
-            System.out.println(codigoo);
-            
-            JSONParser parser = new JSONParser();
-
-            JSONArray carroJArray = null;
-
-            carroJArray = (JSONArray) parser.parse(new FileReader("saida.json"));
-
-            for (Object o : carroJArray) {
-                JSONObject object = (JSONObject) o;
-                String codigo = (String) object.get("codigo");
-                System.out.println(codigo);
-
-                String city = (String) object.get("city");
-                System.out.println(city);
-
-                String job = (String) object.get("job");
-                System.out.println(job);
-
-                JSONArray cars = (JSONArray) object.get("cars");
-
-                for (Object c : cars) {
-                    System.out.println(c + "");
-                }
-
+            if (!"null".equals(parts[0])) {
+                carro.setCodigo(Integer.parseInt(parts[0]));
             }
+            if (!"null".equals(parts[1])) {
+                carro.setMarca(parts[1]);
+            }
+            if (!"null".equals(parts[2])) {
+                carro.setModelo(parts[2]);
+            }
+            if (!"null".equals(parts[3])) {
+                carro.setAno(Integer.parseInt(parts[3]));
+            }
+            if (!"null".equals(parts[4])) {
+                carro.setPotencia(Float.parseFloat(parts[4]));
+            }
+            if (!"null".equals(parts[5])) {
+                carro.setCarga(Float.parseFloat(parts[5]));
+            }
+            if (!"null".equals(parts[6])) {
+                carro.setComplemento(parts[6]);
+            }
+            CarroDAO dao = new CarroDAO();
+            boolean ver = dao.inserir(carro);
+            System.out.println("Cliente " + cliente.getInetAddress().getHostAddress() + " inseriu o carro: " + carro.getModelo() + " - " + ServerTCP.getDataHora());
 
+            if (ver == true) {
+                envia.writeBoolean(true);
+                System.out.println("Servidor confirmou inclusâo ao cliente " + cliente.getInetAddress().getHostAddress() + " - " + ServerTCP.getDataHora());
+            } else {
+                envia.writeBoolean(false);
+                System.out.println("Servidor informou ao cliente " + cliente.getInetAddress().getHostAddress() + " que não conseguiu incluir o carro - " + ServerTCP.getDataHora());
+            }
         } catch (IOException ex) {
             Logger.getLogger(ThreadServer.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(ThreadServer.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (JSONException ex) {
-
-        } catch (ParseException ex) {
             Logger.getLogger(ThreadServer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     public void listarTodos() {
-
+        System.out.println("Cliente solicitou listar todos! - " + cliente.getInetAddress().getHostAddress() + " - " + ServerTCP.getDataHora());
+        try {
+            CarroDAO dao = new CarroDAO();
+            List ListaCarro = dao.listar();
+            envia.writeObject(ListaCarro.toString());
+            System.out.println("Lista enviada para o cliente " + cliente.getInetAddress().getHostAddress() + " - " + ServerTCP.getDataHora());
+        } catch (IOException ex) {
+            Logger.getLogger(ThreadServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void consultar() {

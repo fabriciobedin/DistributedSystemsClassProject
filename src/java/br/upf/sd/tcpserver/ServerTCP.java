@@ -21,15 +21,13 @@ public class ServerTCP{
         boolean conectado = true;
         try {
             ServerSocket servidor = new ServerSocket(porta);
-            
-            
-            
+            int cont = 0;
             while (conectado) {
+                cont++;
                 System.out.println("servidor executando, porta " + porta + " aberta!! " + getDataHora());
                 Socket cliente = servidor.accept();
-                System.out.println("cliente conectado: " + cliente.getInetAddress().getHostAddress());
-                
-                ThreadServer clienteConectado = new ThreadServer(cliente);
+                System.out.println("cliente conectado: " + cliente.getInetAddress().getHostAddress() + " - "+ getDataHora());
+                ThreadServer clienteConectado = new ThreadServer(cliente, cont);
                 clienteConectado.start();
             }
 
