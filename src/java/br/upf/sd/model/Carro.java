@@ -105,6 +105,11 @@ public class Carro {
     
     @Override
     public String toString() {
+        return   "\nCodigo: "+ this.getCodigo() + "  |  Marca: " + this.getMarca() + "  |  Modelo: " + 
+                this.getModelo() + "  |  Ano: " + this.getAno() + "  |  Carga: " + this.getCarga() + "  |  Potencia: " + this.getPotencia() + "  |  Complemento: " + this.getComplemento();
+    }
+    
+    public String toString2() {
         return   "Codigo: "+ this.getCodigo() + "\nMarca: " + this.getMarca() + "\nModelo: " + 
                 this.getModelo() + "\nAno: " + this.getAno() + "\nCarga: " + this.getCarga() + "\nPotencia: " + this.getPotencia() + "\nComplemento: " + this.getComplemento() + "\n";
     }
