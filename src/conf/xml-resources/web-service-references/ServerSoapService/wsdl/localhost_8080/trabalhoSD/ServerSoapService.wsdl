@@ -10,11 +10,11 @@
 <message name="ExcluirResponse">
 <part name="parameters" element="tns:ExcluirResponse"/>
 </message>
-<message name="Consulta">
-<part name="parameters" element="tns:Consulta"/>
+<message name="ListaAnoModelo">
+<part name="parameters" element="tns:ListaAnoModelo"/>
 </message>
-<message name="ConsultaResponse">
-<part name="parameters" element="tns:ConsultaResponse"/>
+<message name="ListaAnoModeloResponse">
+<part name="parameters" element="tns:ListaAnoModeloResponse"/>
 </message>
 <message name="Adiciona">
 <part name="parameters" element="tns:Adiciona"/>
@@ -28,20 +28,20 @@
 <message name="AlteraResponse">
 <part name="parameters" element="tns:AlteraResponse"/>
 </message>
-<message name="ListaAnoModelo">
-<part name="parameters" element="tns:ListaAnoModelo"/>
+<message name="Consulta">
+<part name="parameters" element="tns:Consulta"/>
 </message>
-<message name="ListaAnoModeloResponse">
-<part name="parameters" element="tns:ListaAnoModeloResponse"/>
+<message name="ConsultaResponse">
+<part name="parameters" element="tns:ConsultaResponse"/>
 </message>
 <portType name="ServerSoap">
 <operation name="Excluir">
 <input wsam:Action="http://serversoap.sd.upf.br/ServerSoap/ExcluirRequest" message="tns:Excluir"/>
 <output wsam:Action="http://serversoap.sd.upf.br/ServerSoap/ExcluirResponse" message="tns:ExcluirResponse"/>
 </operation>
-<operation name="Consulta">
-<input wsam:Action="http://serversoap.sd.upf.br/ServerSoap/ConsultaRequest" message="tns:Consulta"/>
-<output wsam:Action="http://serversoap.sd.upf.br/ServerSoap/ConsultaResponse" message="tns:ConsultaResponse"/>
+<operation name="ListaAnoModelo">
+<input wsam:Action="http://serversoap.sd.upf.br/ServerSoap/ListaAnoModeloRequest" message="tns:ListaAnoModelo"/>
+<output wsam:Action="http://serversoap.sd.upf.br/ServerSoap/ListaAnoModeloResponse" message="tns:ListaAnoModeloResponse"/>
 </operation>
 <operation name="Adiciona">
 <input wsam:Action="http://serversoap.sd.upf.br/ServerSoap/AdicionaRequest" message="tns:Adiciona"/>
@@ -51,9 +51,9 @@
 <input wsam:Action="http://serversoap.sd.upf.br/ServerSoap/AlteraRequest" message="tns:Altera"/>
 <output wsam:Action="http://serversoap.sd.upf.br/ServerSoap/AlteraResponse" message="tns:AlteraResponse"/>
 </operation>
-<operation name="ListaAnoModelo">
-<input wsam:Action="http://serversoap.sd.upf.br/ServerSoap/ListaAnoModeloRequest" message="tns:ListaAnoModelo"/>
-<output wsam:Action="http://serversoap.sd.upf.br/ServerSoap/ListaAnoModeloResponse" message="tns:ListaAnoModeloResponse"/>
+<operation name="Consulta">
+<input wsam:Action="http://serversoap.sd.upf.br/ServerSoap/ConsultaRequest" message="tns:Consulta"/>
+<output wsam:Action="http://serversoap.sd.upf.br/ServerSoap/ConsultaResponse" message="tns:ConsultaResponse"/>
 </operation>
 </portType>
 <binding name="ServerSoapPortBinding" type="tns:ServerSoap">
@@ -67,7 +67,7 @@
 <soap:body use="literal"/>
 </output>
 </operation>
-<operation name="Consulta">
+<operation name="ListaAnoModelo">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -94,7 +94,7 @@
 <soap:body use="literal"/>
 </output>
 </operation>
-<operation name="ListaAnoModelo">
+<operation name="Consulta">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
