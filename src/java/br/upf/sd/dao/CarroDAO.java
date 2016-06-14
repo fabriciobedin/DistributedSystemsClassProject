@@ -104,7 +104,7 @@ public class CarroDAO {
         return retorno;
     }
 
-    public static List<Carro> listarAnoModelo(Integer ano, String modelo) {
+    public List<Carro> listarAnoModelo(Integer ano, String modelo) {
         String sql = "select * from Carro where ano = " + ano + " and modelo = '" + modelo + "'";
         List<Carro> retorno = new ArrayList();
         PreparedStatement pst = ConexaoBanco.getPreparedStatement(sql);

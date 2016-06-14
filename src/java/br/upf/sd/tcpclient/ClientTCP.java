@@ -17,8 +17,6 @@ import org.json.JSONObject;
  */
 public class ClientTCP {
 
-    private static final Scanner lerTeclado = new Scanner(System.in);
-    private static final Scanner lerTeclado2 = new Scanner(System.in);
     private static ObjectOutputStream envia;
     private static ObjectInputStream recebe;
     private static final Integer porta = 2006;
@@ -28,6 +26,7 @@ public class ClientTCP {
     private static Integer operacao;
 
     public static void main(String[] args) {
+        Scanner lerTeclado = new Scanner(System.in);
         System.out.println("Olá, informe o endereço IP do servidor que deseja conectar e tecle enter.");
         pegaIp();
         conectaServidor();
@@ -67,29 +66,30 @@ public class ClientTCP {
     }
 
     public static void adicionar() {
+        Scanner lerTeclado = new Scanner(System.in);
         try {
             Carro carro = new Carro();
             System.out.println("\n************ Adicionar Carro ************");
             System.out.print("\nDigite o código do Carro: ");
-            carro.setCodigo(Integer.parseInt(lerTeclado2.nextLine()));
+            carro.setCodigo(Integer.parseInt(lerTeclado.nextLine()));
 
             System.out.print("\nDigite a marca do Carro: ");
-            carro.setMarca(lerTeclado2.nextLine());
+            carro.setMarca(lerTeclado.nextLine());
 
             System.out.print("\nDigite o modelo do Carro: ");
-            carro.setModelo(lerTeclado2.nextLine());
+            carro.setModelo(lerTeclado.nextLine());
 
             System.out.print("\nDigite o ano do Carro: ");
-            carro.setAno(Integer.parseInt(lerTeclado2.nextLine()));
+            carro.setAno(Integer.parseInt(lerTeclado.nextLine()));
 
             System.out.print("\nDigite o potencia do Carro: ");
-            carro.setPotencia(Float.parseFloat(lerTeclado2.nextLine()));
+            carro.setPotencia(Float.parseFloat(lerTeclado.nextLine()));
 
             System.out.print("\nDigite o carga do Carro: ");
-            carro.setCarga(Float.parseFloat(lerTeclado2.nextLine()));
+            carro.setCarga(Float.parseFloat(lerTeclado.nextLine()));
 
             System.out.print("\nDigite o complemento: ");
-            carro.setComplemento(lerTeclado2.nextLine());
+            carro.setComplemento(lerTeclado.nextLine());
 
             String enviarDados
                     = carro.getCodigo() + ":"
@@ -119,10 +119,10 @@ public class ClientTCP {
 
     public static void listarTodos() {
         try {
-            
+
             String dadosRecebidos = recebe.readObject().toString();
             System.out.println(dadosRecebidos);
-       
+
         } catch (IOException ex) {
             Logger.getLogger(ClientTCP.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
@@ -132,12 +132,12 @@ public class ClientTCP {
     }
 
     public static void consultar() {
-        //consultarPorCodigo
+        Scanner lerTeclado = new Scanner(System.in);
         try {
             System.out.println("\n************ Consultar Carro ************");
             System.out.print("Informe o código do carro: ");
 
-            envia.writeInt(Integer.parseInt(lerTeclado2.nextLine()));
+            envia.writeInt(Integer.parseInt(lerTeclado.nextLine()));
 
             Carro carro = new Carro();
 
@@ -163,29 +163,6 @@ public class ClientTCP {
             System.out.println("Complemento:" + carro.getComplemento());
             System.out.println("------------------------------");
 
-//                JSONParser parser = new JSONParser();
-//
-//                JSONArray carroJArray = (JSONArray) parser.parse(new FileReader("saida.json"));
-//
-//                for (Object o : carroJArray) {
-//                    JSONObject object = (JSONObject) o;
-//
-//                    String name = (String) object.get("name");
-//                    System.out.println(name);
-//
-//                    String city = (String) object.get("city");
-//                    System.out.println(city);
-//
-//                    String job = (String) object.get("job");
-//                    System.out.println(job);
-//
-//                    JSONArray cars = (JSONArray) object.get("cars");
-//
-//                    for (Object c : cars) {
-//                        System.out.println(c + "");
-//                    }
-//
-//                }
         } catch (IOException ex) {
             Logger.getLogger(ClientTCP.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
@@ -196,6 +173,29 @@ public class ClientTCP {
     }
 
     public static void consultarAnoModelo() {
+        Scanner lerTeclado = new Scanner(System.in);
+        try {
+            Carro carro = new Carro();
+            System.out.println("\n************ Listar Ano/Modelo ************");
+
+            System.out.print("\nDigite o modelo do Carro: ");
+            carro.setModelo(lerTeclado.nextLine());
+
+            System.out.print("\nDigite o ano do Carro: ");
+            carro.setAno(Integer.parseInt(lerTeclado.nextLine()));
+
+            String enviarDados = (carro.getModelo() + ":" + carro.getAno());
+            System.out.println(enviarDados);
+            envia.writeObject(enviarDados);
+            System.out.println("Dados enviados para o servidor. Aguardando resposta...");
+            String dadosRecebidos = recebe.readObject().toString();
+            System.out.println(dadosRecebidos);
+            
+        } catch (IOException ex) {
+            Logger.getLogger(ClientTCP.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(ClientTCP.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }
 
@@ -204,6 +204,7 @@ public class ClientTCP {
     }
 
     public static void apagar() {
+        Scanner lerTeclado = new Scanner(System.in);
         try {
             System.out.println("\n************ Excluir Carro ************");
             System.out.print("Informe o código do carro: ");
@@ -244,6 +245,7 @@ public class ClientTCP {
     }
 
     public static void pegaIp() {
+        Scanner lerTeclado = new Scanner(System.in);
         boolean testeIP;
         do {
             System.out.print("--> ");
@@ -269,6 +271,7 @@ public class ClientTCP {
     }
 
     public static void testaEnviaOperacao() {
+        Scanner lerTeclado = new Scanner(System.in);
         boolean testeOperacao;
         try {
             do {

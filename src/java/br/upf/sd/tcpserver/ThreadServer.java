@@ -258,7 +258,28 @@ public class ThreadServer extends Thread {
     }
 
     public void consultarAnoModelo() {
-
+        System.out.println("Cliente solicitou listar ano/modelo! - " + cliente.getInetAddress().getHostAddress() + " - " + ServerTCP.getDataHora());
+        try {
+            String dadosRecebidos = (String) recebe.readObject();
+            System.out.println(dadosRecebidos);
+            String[] parts = dadosRecebidos.split(":");
+            Carro carro = new Carro();
+            if (!"null".equals(parts[0])) {
+                carro.setModelo(parts[0]);
+            }
+            if (!"null".equals(parts[1])) {
+                carro.setAno(Integer.parseInt(parts[1]));
+            }
+            System.out.println(carro.toString());
+            CarroDAO dao = new CarroDAO();
+            List ListaCarro = dao.listarAnoModelo(carro.getAno(), carro.getModelo());
+            envia.writeObject(ListaCarro.toString());
+            System.out.println("Lista enviada para o cliente " + cliente.getInetAddress().getHostAddress() + " - " + ServerTCP.getDataHora());
+        } catch (IOException ex) {
+            Logger.getLogger(ThreadServer.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(ThreadServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void alterar() {
