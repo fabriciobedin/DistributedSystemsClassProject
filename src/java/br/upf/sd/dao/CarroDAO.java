@@ -35,6 +35,30 @@ public class CarroDAO {
         return retorno;
 
     }
+    
+    public boolean inserirComCodigo(Carro carro) {
+        String sql = "INSERT INTO carro(codigo,marca,modelo,ano,potencia,carga,complemento) VALUES(?,?,?,?,?,?,?)";
+        Boolean retorno = false;
+        PreparedStatement pst = ConexaoBanco.getPreparedStatement(sql);
+        try {
+            pst.setInt(1, carro.getCodigo());
+            pst.setString(2, carro.getMarca());
+            pst.setString(3, carro.getModelo());
+            pst.setInt(4, carro.getAno());
+            pst.setFloat(5, carro.getPotencia());
+            pst.setFloat(6, carro.getCarga());
+            pst.setString(7, carro.getComplemento());
+            if (pst.executeUpdate() > 0) {
+                retorno = true;
+            }
+
+        } catch (SQLException ex) {
+            System.out.println("Não foi possível inserir o carro" + ex);
+            retorno = false;
+        } 
+        return retorno;
+
+    }
 
     public boolean atualizar(Carro carro) {
         String sql = "UPDATE carro SET marca=?,modelo=?,ano=?, potencia=?, carga=?, complemento=? where codigo=?";
@@ -122,7 +146,7 @@ public class CarroDAO {
                 retorno.add(carro);
             }
         } catch (SQLException ex) {
-            Logger.getLogger(br.upf.sd.dao.CarroDAO.class.getName()).log(Level.SEVERE, null, ex);
+            retorno = null;
         }
         return retorno;
     }

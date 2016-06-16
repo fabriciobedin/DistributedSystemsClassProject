@@ -26,7 +26,7 @@ public class ClientTCP {
 
     public static void main(String[] args) {
         Scanner lerTeclado = new Scanner(System.in);
-        System.out.println("Olá, informe o endereço IP do servidor que deseja conectar e tecle enter.");
+        System.out.println("*************** Olá, informe o endereço IP do servidor ****************");
         pegaIp();
         conectaServidor();
         recebeMenu();
@@ -111,9 +111,10 @@ public class ClientTCP {
 
             boolean verifica = recebe.readBoolean();
             if (verifica == true) {
-                System.out.println("\n\n*********** Carro adicionado com sucesso! ***********");
+                System.out.println("\n******************* Carro adicionado com sucesso! *********************");
             } else {
-                System.out.println("\n\nxxxxxxxxxxx ERRO! Carro não adicionado xxxxxxxxxxx");
+                System.out.println("\nxxxxxxxxxxxxxxxxxxxxx ERRO! Carro não adicionado xxxxxxxxxxxxxxxxxxxxxx");
+                
             }
         } catch (IOException ex) {
             Logger.getLogger(ClientTCP.class.getName()).log(Level.SEVERE, null, ex);
@@ -124,7 +125,8 @@ public class ClientTCP {
     public static void listarTodos() {
         try {
             String dadosRecebidos = recebe.readObject().toString();
-            System.out.println("\n************ Listar Todos ************");
+            System.out.println("\n**************************** Listar Todos *****************************\n");
+            
             System.out.println(dadosRecebidos);
 
         } catch (IOException ex) {
@@ -138,7 +140,7 @@ public class ClientTCP {
     public static void consultar() {
         Scanner lerTeclado = new Scanner(System.in);
         try {
-            System.out.println("\n************ Consultar Carro ************");
+            System.out.println("\n************************** Consultar Carro ****************************");
             System.out.print("Informe o código do carro: ");
 
             int codDig = lerTeclado.nextInt();
@@ -153,8 +155,9 @@ public class ClientTCP {
                 testeExiste = (String) (parts[0]);
             }
 
-            if (testeExiste == "naoencontrado") {
-                System.out.println("\nxxxxxxxxxxxxxxxxxx ERRO! O código informado não foi encontrado xxxxxxxxxxxxxxxxxx");
+            if ("naoencontrado".equals(testeExiste)) {
+                System.out.println("\nxxxxxxxxxxxxx ERRO! O código informado não foi encontrado xxxxxxxxxxxxx");
+                
             } else {
 
                 Carro carro = new Carro();
@@ -181,7 +184,8 @@ public class ClientTCP {
                     carro.setComplemento(parts[7]);
                 }
 
-                System.out.println("\n************ Carro recebido ************");
+                System.out.println("\n*************************** Carro recebido ****************************");
+                
                 System.out.println("Codigo:" + carro.getCodigo());
                 System.out.println("Marca:" + carro.getMarca());
                 System.out.println("Modelo:" + carro.getModelo());
@@ -189,7 +193,6 @@ public class ClientTCP {
                 System.out.println("Potencia:" + carro.getPotencia());
                 System.out.println("Carga:" + carro.getCarga());
                 System.out.println("Complemento:" + carro.getComplemento());
-                System.out.println("------------------------------------------");
             }
 
         } catch (IOException ex) {
@@ -203,8 +206,8 @@ public class ClientTCP {
         Scanner lerTeclado = new Scanner(System.in);
         try {
             Carro carro = new Carro();
-            System.out.println("\n************ Consultar Ano/Modelo ************");
-
+            System.out.println("\n************************ Consultar Ano/Modelo *************************");
+            
             System.out.print("\nDigite o modelo do Carro: ");
             carro.setModelo(lerTeclado.nextLine());
 
@@ -212,13 +215,22 @@ public class ClientTCP {
             carro.setAno(Integer.parseInt(lerTeclado.nextLine()));
 
             String enviarDados = (carro.getModelo() + ":" + carro.getAno());
-            System.out.println(enviarDados);
+            
             envia.writeObject(enviarDados);
             envia.flush();
             System.out.println("Dados enviados para o servidor. Aguardando resposta...");
-            System.out.println("---------------------------------------------------------------------");
+            System.out.println("\n-----------------------------------------------------------------------");
+            
+            
             String dadosRecebidos = recebe.readObject().toString();
-            System.out.println(dadosRecebidos);
+            if(dadosRecebidos == null){
+                System.out.println("\nNão foram encontrados registros de carros com esse modelo e ano!");
+                
+            }else{
+                System.out.println(dadosRecebidos);
+                System.out.println("\n-----------------------------------------------------------------------\n");
+            }
+            
 
         } catch (IOException ex) {
             Logger.getLogger(ClientTCP.class.getName()).log(Level.SEVERE, null, ex);
@@ -233,7 +245,7 @@ public class ClientTCP {
         Scanner lerTeclado2 = new Scanner(System.in);
 
         try {
-            System.out.println("\n************ Alterar Carro ************");
+            System.out.println("\n**************************** Alterar Carro ****************************");
             System.out.print("Informe o código do carro: ");
 
             int codDig = lerTeclado2.nextInt();
@@ -242,81 +254,96 @@ public class ClientTCP {
 
             String dadosRecebidos = (String) recebe.readObject();
             String[] parts = dadosRecebidos.split(":");
-            Carro carro = new Carro();
+            String testeExiste = null;
+
             if (!"null".equals(parts[0])) {
-                carro.setCodigo(Integer.parseInt(parts[0]));
-            }
-            if (!"null".equals(parts[1])) {
-                carro.setMarca(parts[1]);
-            }
-            if (!"null".equals(parts[2])) {
-                carro.setModelo(parts[2]);
-            }
-            if (!"null".equals(parts[3])) {
-                carro.setAno(Integer.parseInt(parts[3]));
-            }
-            if (!"null".equals(parts[4])) {
-                carro.setPotencia(Float.parseFloat(parts[4]));
-            }
-            if (!"null".equals(parts[5])) {
-                carro.setCarga(Float.parseFloat(parts[5]));
-            }
-            if (!"null".equals(parts[6])) {
-                carro.setComplemento(parts[6]);
+                testeExiste = (String) (parts[0]);
             }
 
-            System.out.println("\n************ Dados atuais do carro solicitado ************");
-            System.out.println("Codigo:" + carro.getCodigo());
-            System.out.println("Marca:" + carro.getMarca());
-            System.out.println("Modelo:" + carro.getModelo());
-            System.out.println("Ano:" + carro.getAno());
-            System.out.println("Potencia:" + carro.getPotencia());
-            System.out.println("Carga:" + carro.getCarga());
-            System.out.println("Complemento:" + carro.getComplemento());
-            System.out.println("------------------------------------------");
-
-            System.out.println("\n************ Informe os novos dados ************");
-            System.out.print("\nDigite o código do Carro: ");
-            carro.setCodigo(Integer.parseInt(lerTeclado.nextLine()));
-
-            System.out.print("\nDigite a marca do Carro: ");
-            carro.setMarca(lerTeclado.nextLine());
-
-            System.out.print("\nDigite o modelo do Carro: ");
-            carro.setModelo(lerTeclado.nextLine());
-
-            System.out.print("\nDigite o ano do Carro: ");
-            carro.setAno(Integer.parseInt(lerTeclado.nextLine()));
-
-            System.out.print("\nDigite o potencia do Carro: ");
-            carro.setPotencia(Float.parseFloat(lerTeclado.nextLine()));
-
-            System.out.print("\nDigite o carga do Carro: ");
-            carro.setCarga(Float.parseFloat(lerTeclado.nextLine()));
-
-            System.out.print("\nDigite o complemento: ");
-            carro.setComplemento(lerTeclado.nextLine());
-
-            String enviarDados
-                    = carro.getCodigo() + ":"
-                    + carro.getMarca() + ":"
-                    + carro.getModelo() + ":"
-                    + carro.getAno() + ":"
-                    + carro.getPotencia() + ":"
-                    + carro.getCarga() + ":"
-                    + carro.getComplemento();
-
-            envia.writeObject(enviarDados);
-            envia.flush();
-            System.out.println("Dados enviados para o servidor. Aguardando confirmação...");
-
-            boolean verifica = recebe.readBoolean();
-            if (verifica == true) {
-                System.out.println("\n\n*********** Carro alterado com sucesso! ***********");
+            if ("naoencontrado".equals(testeExiste)) {
+                System.out.println("\nxxxxxxxxxxxxx ERRO! O código informado não foi encontrado xxxxxxxxxxxxx");
             } else {
-                System.out.println("\n\nxxxxxxxxxxx ERRO! Carro não alterado xxxxxxxxxxx");
-            }
 
+                Carro carro = new Carro();
+
+                if (!"null".equals(parts[1])) {
+                    carro.setCodigo(Integer.parseInt(parts[1]));
+                }
+                if (!"null".equals(parts[2])) {
+                    carro.setMarca(parts[2]);
+                }
+                if (!"null".equals(parts[3])) {
+                    carro.setModelo(parts[3]);
+                }
+                if (!"null".equals(parts[4])) {
+                    carro.setAno(Integer.parseInt(parts[4]));
+                }
+                if (!"null".equals(parts[5])) {
+                    carro.setPotencia(Float.parseFloat(parts[5]));
+                }
+                if (!"null".equals(parts[6])) {
+                    carro.setCarga(Float.parseFloat(parts[6]));
+                }
+                if (!"null".equals(parts[7])) {
+                    carro.setComplemento(parts[7]);
+                }
+
+                System.out.println("\n****************** Dados atuais do carro solicitado *******************");
+                System.out.println("Codigo:" + carro.getCodigo());
+                System.out.println("Marca:" + carro.getMarca());
+                System.out.println("Modelo:" + carro.getModelo());
+                System.out.println("Ano:" + carro.getAno());
+                System.out.println("Potencia:" + carro.getPotencia());
+                System.out.println("Carga:" + carro.getCarga());
+                System.out.println("Complemento:" + carro.getComplemento());
+                System.out.println("-----------------------------------------------------------------------");
+
+                System.out.println("\n*********************** Informe os novos dados ************************");
+                System.out.print("\nDigite o código do Carro: ");
+                carro.setCodigo(Integer.parseInt(lerTeclado.nextLine()));
+
+                System.out.print("\nDigite a marca do Carro: ");
+                carro.setMarca(lerTeclado.nextLine());
+
+                System.out.print("\nDigite o modelo do Carro: ");
+                carro.setModelo(lerTeclado.nextLine());
+
+                System.out.print("\nDigite o ano do Carro: ");
+                carro.setAno(Integer.parseInt(lerTeclado.nextLine()));
+
+                System.out.print("\nDigite o potencia do Carro: ");
+                carro.setPotencia(Float.parseFloat(lerTeclado.nextLine()));
+
+                System.out.print("\nDigite o carga do Carro: ");
+                carro.setCarga(Float.parseFloat(lerTeclado.nextLine()));
+
+                System.out.print("\nDigite o complemento: ");
+                carro.setComplemento(lerTeclado.nextLine());
+
+                String enviarDados
+                        = carro.getCodigo() + ":"
+                        + carro.getMarca() + ":"
+                        + carro.getModelo() + ":"
+                        + carro.getAno() + ":"
+                        + carro.getPotencia() + ":"
+                        + carro.getCarga() + ":"
+                        + carro.getComplemento();
+
+                envia.writeObject(enviarDados);
+                envia.flush();
+                System.out.println("Dados enviados para o servidor. Aguardando confirmação...");
+
+                boolean verifica = recebe.readBoolean();
+                if (verifica == true) {
+                    System.out.println("\n********************* Carro alterado com sucesso! *********************");
+                    
+                    
+                } else {
+                    System.out.println("\nxxxxxxxxxxxxxxxxxxxxxx ERRO! Carro não alterado xxxxxxxxxxxxxxxxxxxxxxx");
+                    
+                }
+
+            }
         } catch (IOException ex) {
             Logger.getLogger(ClientTCP.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
@@ -328,7 +355,7 @@ public class ClientTCP {
     public static void apagar() {
         Scanner lerTeclado = new Scanner(System.in);
         try {
-            System.out.println("\n************ Excluir Carro ************");
+            System.out.println("\n**************************** Excluir Carro ****************************");
             System.out.print("Informe o código do carro: ");
 
             envia.writeInt(Integer.parseInt(lerTeclado.nextLine()));
@@ -338,9 +365,9 @@ public class ClientTCP {
 
             boolean verifica = recebe.readBoolean();
             if (verifica == true) {
-                System.out.println("\n\n*********** Carro apagado com sucesso! ***********");
+                System.out.println("\n********************* Carro apagado com sucesso! **********************");
             } else {
-                System.out.println("\n\nxxxxxxxxxxx ERRO! Carro não apagado xxxxxxxxxxx");
+                System.out.println("\nxxxxxxxxxxxxxxxxxxxxxxx ERRO! Carro não apagado xxxxxxxxxxxxxxxxxxxxxxx");
             }
         } catch (IOException ex) {
             Logger.getLogger(ClientTCP.class.getName()).log(Level.SEVERE, null, ex);
@@ -351,7 +378,7 @@ public class ClientTCP {
         try {
             recebe.close();
             envia.close();
-            System.out.println("\n\n******************** Conexão com o servidor finalizada ********************");
+            System.out.println("\n****************** Conexão com o servidor finalizada ******************\n");
         } catch (IOException ex) {
             Logger.getLogger(ClientTCP.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -375,7 +402,7 @@ public class ClientTCP {
             ip = lerTeclado.nextLine();
             testeIP = validaIP(ip);
             if (testeIP == false) {
-                System.out.println("\nxxxxxxxxxxxxxx IP inválido!!! xxxxxxxxxxxxxx");
+                System.out.println("\nxxxxxxxxxxxxxxxxxxxxxxxxxxx IP inválido!!! xxxxxxxxxxxxxxxxxxxxxxxxxxxx");
                 System.out.println("Por favor, digite novamente o endereço do servidor");
                 System.out.println("Ele deverá seguir esse formato: 000.000.000.000");
             }
@@ -405,12 +432,12 @@ public class ClientTCP {
                 //vai enviar a operacao para o servidor e aguardar resposta se é válida ou não
                 testeOperacao = recebe.readBoolean();
                 if (testeOperacao == false) {
-                    System.out.println("\nxxxx Operação inválida!! xxxx");
+                    System.out.println("\nxxxxxxxxxxxxxxxxxxxxxxxxx Operação inválida!! xxxxxxxxxxxxxxxxxxxxxxxxx");
                     System.out.println("Por favor, digite novamente..");
 
-                } else {
-                    System.out.println("\nProcessando dados...");
-                }
+                } //else {
+                    //System.out.println("\nProcessando...");
+               // }
             } while (testeOperacao == false);
         } catch (IOException ex) {
             Logger.getLogger(ClientTCP.class.getName()).log(Level.SEVERE, null, ex);

@@ -22,7 +22,8 @@ public class ThreadServer extends Thread {
     private ObjectOutputStream envia;
     private ObjectInputStream recebe;
     private boolean testeOperacao;
-    private int operacao;
+    private int operacao = 0;
+    private int controle = 0;
 
     public ThreadServer(Socket cliente, Integer contThread) {
         this.cliente = cliente;
@@ -32,11 +33,11 @@ public class ThreadServer extends Thread {
     @Override
     public void run() {
 
-        System.out.println("Thread " + contThread + " - iniciada ****************************************** - IP: " + cliente.getInetAddress().getHostAddress() + " - " + ServerTCP.getDataHora());
-        
+        System.out.println("Thread " + contThread + " - iniciada ****************************************** - IP: " + cliente.getInetAddress().getHostAddress() + " : " + cliente.getPort() + " - " + ServerTCP.getDataHora());
+
         enviaMenu();
         do {
-            
+
             operacao = recebeOperacao();
 
             switch (operacao) {
@@ -68,6 +69,10 @@ public class ThreadServer extends Thread {
                     sair();
                 }
             }
+            if (controle >= 5) {
+                sair();
+            }
+
         } while (operacao != 7);
     }
 
@@ -83,7 +88,7 @@ public class ThreadServer extends Thread {
     }
 
     public Integer recebeOperacao() {
-        Integer operacao = 0;
+
         try {
 
             do {
@@ -110,6 +115,8 @@ public class ThreadServer extends Thread {
             } while (testeOperacao == false);
         } catch (IOException ex) {
             System.out.println("Thread " + contThread + " - " + "Erro ao receber operação! - " + ServerTCP.getDataHora());
+            controle++;
+
         }
         return operacao;
     }
@@ -128,22 +135,22 @@ public class ThreadServer extends Thread {
             System.out.println("Thread " + contThread + " - " + "Erro ao obter o endereço IP - " + ServerTCP.getDataHora());
         }
 
-        String menu = (""
-                + "\n******************************************************************************************\n"
-                + "**                   Você está conectado ao servidor " + ipServer + "!                     **\n"
-                + "******************************************************************************************\n"
-                + "**                                                                                      **\n"
-                + "**                     Digite abaixo o número da opção desejada                         **\n"
-                + "**                                                                                      **\n"
-                + "**                  1 - Adicionar                     4 - Ano/modelo                    **\n"
-                + "**                                                                                      **\n"
-                + "**                  2 - Listar Todos                  5 - Alterar                       **\n"
-                + "**                                                                                      **\n"
-                + "**                  3 - Consultar                     6 - Apagar                        **\n"
-                + "**                                                                                      **\n"
-                + "**                                     7 - Sair                                         **\n"
-                + "**                                                                                      **\n"
-                + "******************************************************************************************\n");
+        String menu = ("\n--------------------------------------------------------------------------==--\n"
+                + "\n***********************************************************************\n"
+                + "            Você está conectado ao servidor " + ipServer + "!          \n"
+                + "***********************************************************************\n"
+                + "**                                                                   **\n"
+                + "**             Digite abaixo o número da opção desejada              **\n"
+                + "**                                                                   **\n"
+                + "**          1 - Adicionar                    4 - Ano/modelo          **\n"
+                + "**                                                                   **\n"
+                + "**          2 - Listar Todos                 5 - Alterar             **\n"
+                + "**                                                                   **\n"
+                + "**          3 - Consultar                    6 - Apagar              **\n"
+                + "**                                                                   **\n"
+                + "**                             7 - Sair                              **\n"
+                + "**                                                                   **\n"
+                + "***********************************************************************\n");
 
         return menu;
 
@@ -200,9 +207,9 @@ public class ThreadServer extends Thread {
             if (!"null".equals(parts[6])) {
                 carro.setComplemento(parts[6]);
             }
+            System.out.println("Thread " + contThread + " - " + "Cliente inseriu o carro com código: " + carro.getCodigo() + " - " + ServerTCP.getDataHora());
             CarroDAO dao = new CarroDAO();
-            boolean ver = dao.inserir(carro);
-            System.out.println("Thread " + contThread + " - " + "Cliente inseriu o carro: " + carro.getModelo() + " - " + ServerTCP.getDataHora());
+            boolean ver = dao.inserirComCodigo(carro);
 
             if (ver == true) {
                 envia.writeBoolean(true);
@@ -218,6 +225,7 @@ public class ThreadServer extends Thread {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(ThreadServer.class.getName()).log(Level.SEVERE, null, ex);
         }
+        operacao = 0;
     }
 
     public void listarTodos() {
@@ -229,12 +237,13 @@ public class ThreadServer extends Thread {
             envia.flush();
             System.out.println("Thread " + contThread + " - " + "Lista enviada para o cliente - " + ServerTCP.getDataHora());
             ThreadServer.sleep(1000);
-            
+
         } catch (IOException ex) {
             Logger.getLogger(ThreadServer.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InterruptedException ex) {
             System.out.println("Erro no temporizador..");
         }
+        operacao = 0;
     }
 
     public void consultar() {
@@ -243,34 +252,49 @@ public class ThreadServer extends Thread {
 
             Integer codListar = recebe.readInt();
             System.out.println("Thread " + contThread + " - " + "Cliente consultou carro de código: " + codListar + " - " + ServerTCP.getDataHora());
-            
+
             Carro carro = new Carro();
-            carro=null;
+            carro = null;
             String teste;
             CarroDAO dao = new CarroDAO();
             carro = dao.buscarCod(codListar);
-            if (carro ==null){
+            if (carro == null) {
                 teste = "naoencontrado";
+                String enviarDados
+                        = teste + ":"
+                        + "xxxx" + ":"
+                        + "xxxx" + ":"
+                        + "xxxx" + ":"
+                        + "xxxx" + ":"
+                        + "xxxx" + ":"
+                        + "xxxx" + ":"
+                        + "xxxx";
+
+                envia.writeObject(enviarDados);
+                envia.flush();
+                System.out.println("Thread " + contThread + " - " + "Carro não encontrado.. informando cliente - " + ServerTCP.getDataHora());
+
             } else {
                 teste = "encontrado";
-            }
-            String enviarDados
-                    = teste + ":"
-                    + carro.getCodigo() + ":"
-                    + carro.getMarca() + ":"
-                    + carro.getModelo() + ":"
-                    + carro.getAno() + ":"
-                    + carro.getPotencia() + ":"
-                    + carro.getCarga() + ":"
-                    + carro.getComplemento();
+                String enviarDados
+                        = teste + ":"
+                        + carro.getCodigo() + ":"
+                        + carro.getMarca() + ":"
+                        + carro.getModelo() + ":"
+                        + carro.getAno() + ":"
+                        + carro.getPotencia() + ":"
+                        + carro.getCarga() + ":"
+                        + carro.getComplemento();
 
-            envia.writeObject(enviarDados);
-            envia.flush();
-            System.out.println("Thread " + contThread + " - " + "Carro enviado para cliente - " + ServerTCP.getDataHora());
+                envia.writeObject(enviarDados);
+                envia.flush();
+                System.out.println("Thread " + contThread + " - " + "Carro enviado para cliente - " + ServerTCP.getDataHora());
+            }
 
         } catch (IOException ex) {
             Logger.getLogger(ThreadServer.class.getName()).log(Level.SEVERE, null, ex);
         }
+        operacao = 0;
     }
 
     public void consultarAnoModelo() {
@@ -288,15 +312,25 @@ public class ThreadServer extends Thread {
             }
 
             CarroDAO dao = new CarroDAO();
-            List ListaCarro = dao.listarAnoModelo(carro.getAno(), carro.getModelo());
-            envia.writeObject(ListaCarro.toString());
-            envia.flush();
-            System.out.println("Thread " + contThread + " - " + "Lista enviada para o cliente " + ServerTCP.getDataHora());
+            List listaCarro = dao.listarAnoModelo(carro.getAno(), carro.getModelo());
+
+            if (listaCarro == null) {
+                envia.writeObject(listaCarro.toString());
+                envia.flush();
+                System.out.println("Thread " + contThread + " - " + "Carros não encontrados.. informando cliente - " + ServerTCP.getDataHora());
+            } else {
+                envia.writeObject(listaCarro.toString());
+                envia.flush();
+                System.out.println("Thread " + contThread + " - " + "Lista enviada para o cliente - " + ServerTCP.getDataHora());
+
+            }
+
         } catch (IOException ex) {
             Logger.getLogger(ThreadServer.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(ThreadServer.class.getName()).log(Level.SEVERE, null, ex);
         }
+        operacao = 0;
     }
 
     public void alterar() {
@@ -306,64 +340,89 @@ public class ThreadServer extends Thread {
             System.out.println("Thread " + contThread + " - " + "Cliente consultou carro de código: " + codListar + " - " + ServerTCP.getDataHora());
 
             Carro carro = new Carro();
+            carro = null;
+            String teste;
+
             CarroDAO dao = new CarroDAO();
             carro = dao.buscarCod(codListar);
 
-            String enviarDados
-                    = carro.getCodigo() + ":"
-                    + carro.getMarca() + ":"
-                    + carro.getModelo() + ":"
-                    + carro.getAno() + ":"
-                    + carro.getPotencia() + ":"
-                    + carro.getCarga() + ":"
-                    + carro.getComplemento();
+            if (carro == null) {
+                teste = "naoencontrado";
+                String enviarDados
+                        = teste + ":"
+                        + "xxxx" + ":"
+                        + "xxxx" + ":"
+                        + "xxxx" + ":"
+                        + "xxxx" + ":"
+                        + "xxxx" + ":"
+                        + "xxxx" + ":"
+                        + "xxxx";
 
-            envia.writeObject(enviarDados);
-            envia.flush();
-            System.out.println("Thread " + contThread + " - " + "Carro enviado para cliente - " + ServerTCP.getDataHora());
-
-            String dadosRecebidos = (String) recebe.readObject();
-            String[] parts = dadosRecebidos.split(":");
-            Carro carro2 = new Carro();
-            if (!"null".equals(parts[0])) {
-                carro2.setCodigo(Integer.parseInt(parts[0]));
-            }
-            if (!"null".equals(parts[1])) {
-                carro2.setMarca(parts[1]);
-            }
-            if (!"null".equals(parts[2])) {
-                carro2.setModelo(parts[2]);
-            }
-            if (!"null".equals(parts[3])) {
-                carro2.setAno(Integer.parseInt(parts[3]));
-            }
-            if (!"null".equals(parts[4])) {
-                carro2.setPotencia(Float.parseFloat(parts[4]));
-            }
-            if (!"null".equals(parts[5])) {
-                carro2.setCarga(Float.parseFloat(parts[5]));
-            }
-            if (!"null".equals(parts[6])) {
-                carro2.setComplemento(parts[6]);
-            }
-            CarroDAO dao2 = new CarroDAO();
-            boolean ver = dao.atualizar(carro2);
-            System.out.println("Thread " + contThread + " - " + "Cliente alterou o carro: " + carro2.getCodigo() + " - " + ServerTCP.getDataHora());
-
-            if (ver == true) {
-                envia.writeBoolean(true);
+                envia.writeObject(enviarDados);
                 envia.flush();
-                System.out.println("Thread " + contThread + " - " + "Servidor confirmou a alteração ao cliente - " + ServerTCP.getDataHora());
+                System.out.println("Thread " + contThread + " - " + "Carro não encontrado.. informando cliente - " + ServerTCP.getDataHora());
+
             } else {
-                envia.writeBoolean(false);
+                teste = "encontrado";
+                String enviarDados
+                        = teste + ":"
+                        + carro.getCodigo() + ":"
+                        + carro.getMarca() + ":"
+                        + carro.getModelo() + ":"
+                        + carro.getAno() + ":"
+                        + carro.getPotencia() + ":"
+                        + carro.getCarga() + ":"
+                        + carro.getComplemento();
+
+                envia.writeObject(enviarDados);
                 envia.flush();
-                System.out.println("Thread " + contThread + " - " + "Servidor informou ao cliente que não conseguiu alterar o carro - " + ServerTCP.getDataHora());
+                System.out.println("Thread " + contThread + " - " + "Carro enviado para cliente - " + ServerTCP.getDataHora());
+
+                String dadosRecebidos = (String) recebe.readObject();
+                String[] parts = dadosRecebidos.split(":");
+                Carro carro2 = new Carro();
+                if (!"null".equals(parts[0])) {
+                    carro2.setCodigo(Integer.parseInt(parts[0]));
+                }
+                if (!"null".equals(parts[1])) {
+                    carro2.setMarca(parts[1]);
+                }
+                if (!"null".equals(parts[2])) {
+                    carro2.setModelo(parts[2]);
+                }
+                if (!"null".equals(parts[3])) {
+                    carro2.setAno(Integer.parseInt(parts[3]));
+                }
+                if (!"null".equals(parts[4])) {
+                    carro2.setPotencia(Float.parseFloat(parts[4]));
+                }
+                if (!"null".equals(parts[5])) {
+                    carro2.setCarga(Float.parseFloat(parts[5]));
+                }
+                if (!"null".equals(parts[6])) {
+                    carro2.setComplemento(parts[6]);
+                }
+                CarroDAO dao2 = new CarroDAO();
+                boolean ver = dao.atualizar(carro2);
+                System.out.println("Thread " + contThread + " - " + "Cliente alterou o carro: " + carro2.getCodigo() + " - " + ServerTCP.getDataHora());
+
+                if (ver == true) {
+                    envia.writeBoolean(true);
+                    envia.flush();
+                    System.out.println("Thread " + contThread + " - " + "Servidor confirmou a alteração ao cliente - " + ServerTCP.getDataHora());
+                } else {
+                    envia.writeBoolean(false);
+                    envia.flush();
+                    System.out.println("Thread " + contThread + " - " + "Servidor informou ao cliente que não conseguiu alterar o carro - " + ServerTCP.getDataHora());
+                }
             }
+
         } catch (IOException ex) {
             Logger.getLogger(ThreadServer.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(ThreadServer.class.getName()).log(Level.SEVERE, null, ex);
         }
+        operacao = 0;
     }
 
     public void apagar() {
@@ -388,6 +447,7 @@ public class ThreadServer extends Thread {
         } catch (IOException ex) {
             Logger.getLogger(ThreadServer.class.getName()).log(Level.SEVERE, null, ex);
         }
+        operacao = 0;
     }
 
     public void sair() {
@@ -395,13 +455,10 @@ public class ThreadServer extends Thread {
             recebe.close();
             envia.close();
             System.out.println("Thread " + contThread + " - finalizada xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx - " + "Cliente saíu - " + ServerTCP.getDataHora());
-
+            Thread.currentThread().stop();
         } catch (IOException ex) {
             System.out.println("Thread " + contThread + " - " + "Não conseguiu fechar a conexão - " + ServerTCP.getDataHora());
         }
     }
-
-    
-    
 
 }
