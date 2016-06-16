@@ -197,6 +197,7 @@ public class CarroDAO {
 
         } catch (SQLException ex) {
             System.out.println("Carro não encontrado no banco");
+            retorno = null;
         }
 
         return retorno;

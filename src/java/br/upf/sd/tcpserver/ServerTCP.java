@@ -35,6 +35,8 @@ public class ServerTCP{
             System.out.println("Erro: " + e.getMessage());
         }
     }
+    
+    
     public static String getDataHora(){
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         return dateFormat.format(new Date()) + " ";  
