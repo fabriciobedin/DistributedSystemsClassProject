@@ -196,8 +196,7 @@ public class CarroDAO {
             }
 
         } catch (SQLException ex) {
-            Logger.getLogger(br.upf.sd.dao.CarroDAO.class.getName()).log(Level.SEVERE, null, ex);
-
+            System.out.println("Carro não encontrado no banco");
         }
 
         return retorno;
