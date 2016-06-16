@@ -234,27 +234,29 @@ public class ThreadServer extends Thread {
 
     public void consultar() {
         try {
-            int codListar;
-            codListar = recebe.readInt();
+            
+            int codListar = recebe.readInt();
             System.out.println("Consultando carro com o código: " + codListar);
+            
             CarroDAO dao = new CarroDAO();
             Carro carro = new Carro();
             carro = dao.buscarCod(codListar);
-            JSONObject carroObjeto = new JSONObject();
-            carroObjeto.put("codigo", carro.getCodigo());
-            carroObjeto.put("marca", carro.getMarca());
-            carroObjeto.put("modelo", carro.getModelo());
-            carroObjeto.put("ano", carro.getAno());
-            carroObjeto.put("potencia", carro.getPotencia());
-            carroObjeto.put("carga", carro.getCarga());
-            carroObjeto.put("complemento", carro.getComplemento());
-            envia.writeObject(carroObjeto.toString());
+            
+            String enviarDados
+                    = carro.getCodigo() + ":"
+                    + carro.getMarca() + ":"
+                    + carro.getModelo() + ":"
+                    + carro.getAno() + ":"
+                    + carro.getPotencia() + ":"
+                    + carro.getCarga() + ":"
+                    + carro.getComplemento();
+
+            envia.writeObject(enviarDados);
+            
 
         } catch (IOException ex) {
             Logger.getLogger(ThreadServer.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (JSONException ex) {
-            Logger.getLogger(ThreadServer.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } 
     }
 
     public void consultarAnoModelo() {
@@ -283,8 +285,49 @@ public class ThreadServer extends Thread {
     }
 
     public void alterar() {
+        try {
 
-    }
+            String dadosRecebidos = (String) recebe.readObject();
+            String[] parts = dadosRecebidos.split(":");
+            Carro carro = new Carro();
+            if (!"null".equals(parts[0])) {
+                carro.setCodigo(Integer.parseInt(parts[0]));
+            }
+            if (!"null".equals(parts[1])) {
+                carro.setMarca(parts[1]);
+            }
+            if (!"null".equals(parts[2])) {
+                carro.setModelo(parts[2]);
+            }
+            if (!"null".equals(parts[3])) {
+                carro.setAno(Integer.parseInt(parts[3]));
+            }
+            if (!"null".equals(parts[4])) {
+                carro.setPotencia(Float.parseFloat(parts[4]));
+            }
+            if (!"null".equals(parts[5])) {
+                carro.setCarga(Float.parseFloat(parts[5]));
+            }
+            if (!"null".equals(parts[6])) {
+                carro.setComplemento(parts[6]);
+            }
+            CarroDAO dao = new CarroDAO();
+            boolean ver = dao.inserir(carro);
+            System.out.println("Cliente " + cliente.getInetAddress().getHostAddress() + " inseriu o carro: " + carro.getModelo() + " - " + ServerTCP.getDataHora());
+
+            if (ver == true) {
+                envia.writeBoolean(true);
+                System.out.println("Servidor confirmou inclusâo ao cliente " + cliente.getInetAddress().getHostAddress() + " - " + ServerTCP.getDataHora());
+            } else {
+                envia.writeBoolean(false);
+                System.out.println("Servidor informou ao cliente " + cliente.getInetAddress().getHostAddress() + " que não conseguiu incluir o carro - " + ServerTCP.getDataHora());
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(ThreadServer.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(ThreadServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+      }
 
     public void apagar() {
         int codApagar;
