@@ -8,8 +8,6 @@ import java.net.Socket;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  *
@@ -114,7 +112,7 @@ public class ClientTCP {
                 System.out.println("\n******************* Carro adicionado com sucesso! *********************");
             } else {
                 System.out.println("\nxxxxxxxxxxxxxxxxxxxxx ERRO! Carro não adicionado xxxxxxxxxxxxxxxxxxxxxx");
-                
+
             }
         } catch (IOException ex) {
             Logger.getLogger(ClientTCP.class.getName()).log(Level.SEVERE, null, ex);
@@ -126,7 +124,7 @@ public class ClientTCP {
         try {
             String dadosRecebidos = recebe.readObject().toString();
             System.out.println("\n**************************** Listar Todos *****************************\n");
-            
+
             System.out.println(dadosRecebidos);
 
         } catch (IOException ex) {
@@ -157,7 +155,7 @@ public class ClientTCP {
 
             if ("naoencontrado".equals(testeExiste)) {
                 System.out.println("\nxxxxxxxxxxxxx ERRO! O código informado não foi encontrado xxxxxxxxxxxxx");
-                
+
             } else {
 
                 Carro carro = new Carro();
@@ -185,7 +183,7 @@ public class ClientTCP {
                 }
 
                 System.out.println("\n*************************** Carro recebido ****************************");
-                
+
                 System.out.println("Codigo:" + carro.getCodigo());
                 System.out.println("Marca:" + carro.getMarca());
                 System.out.println("Modelo:" + carro.getModelo());
@@ -207,7 +205,7 @@ public class ClientTCP {
         try {
             Carro carro = new Carro();
             System.out.println("\n************************ Consultar Ano/Modelo *************************");
-            
+
             System.out.print("\nDigite o modelo do Carro: ");
             carro.setModelo(lerTeclado.nextLine());
 
@@ -215,22 +213,20 @@ public class ClientTCP {
             carro.setAno(Integer.parseInt(lerTeclado.nextLine()));
 
             String enviarDados = (carro.getModelo() + ":" + carro.getAno());
-            
+
             envia.writeObject(enviarDados);
             envia.flush();
-            System.out.println("Dados enviados para o servidor. Aguardando resposta...");
+            System.out.println("\nDados enviados para o servidor. Aguardando resposta...");
             System.out.println("\n-----------------------------------------------------------------------");
-            
-            
+
             String dadosRecebidos = recebe.readObject().toString();
-            if(dadosRecebidos == null){
+            if ("[]".equals(dadosRecebidos)) {
                 System.out.println("\nNão foram encontrados registros de carros com esse modelo e ano!");
-                
-            }else{
+
+            } else {
                 System.out.println(dadosRecebidos);
                 System.out.println("\n-----------------------------------------------------------------------\n");
             }
-            
 
         } catch (IOException ex) {
             Logger.getLogger(ClientTCP.class.getName()).log(Level.SEVERE, null, ex);
@@ -245,7 +241,7 @@ public class ClientTCP {
         Scanner lerTeclado2 = new Scanner(System.in);
 
         try {
-            System.out.println("\n**************************** Alterar Carro ****************************");
+            System.out.println("\n**************************** Alterar Carro ****************************\n");
             System.out.print("Informe o código do carro: ");
 
             int codDig = lerTeclado2.nextInt();
@@ -259,13 +255,12 @@ public class ClientTCP {
             if (!"null".equals(parts[0])) {
                 testeExiste = (String) (parts[0]);
             }
-
+            
+            
             if ("naoencontrado".equals(testeExiste)) {
                 System.out.println("\nxxxxxxxxxxxxx ERRO! O código informado não foi encontrado xxxxxxxxxxxxx");
             } else {
-
                 Carro carro = new Carro();
-
                 if (!"null".equals(parts[1])) {
                     carro.setCodigo(Integer.parseInt(parts[1]));
                 }
@@ -287,7 +282,8 @@ public class ClientTCP {
                 if (!"null".equals(parts[7])) {
                     carro.setComplemento(parts[7]);
                 }
-
+                
+                
                 System.out.println("\n****************** Dados atuais do carro solicitado *******************");
                 System.out.println("Codigo:" + carro.getCodigo());
                 System.out.println("Marca:" + carro.getMarca());
@@ -298,10 +294,8 @@ public class ClientTCP {
                 System.out.println("Complemento:" + carro.getComplemento());
                 System.out.println("-----------------------------------------------------------------------");
 
+                
                 System.out.println("\n*********************** Informe os novos dados ************************");
-                System.out.print("\nDigite o código do Carro: ");
-                carro.setCodigo(Integer.parseInt(lerTeclado.nextLine()));
-
                 System.out.print("\nDigite a marca do Carro: ");
                 carro.setMarca(lerTeclado.nextLine());
 
@@ -336,11 +330,10 @@ public class ClientTCP {
                 boolean verifica = recebe.readBoolean();
                 if (verifica == true) {
                     System.out.println("\n********************* Carro alterado com sucesso! *********************");
-                    
-                    
+
                 } else {
                     System.out.println("\nxxxxxxxxxxxxxxxxxxxxxx ERRO! Carro não alterado xxxxxxxxxxxxxxxxxxxxxxx");
-                    
+
                 }
 
             }
@@ -436,8 +429,8 @@ public class ClientTCP {
                     System.out.println("Por favor, digite novamente..");
 
                 } //else {
-                    //System.out.println("\nProcessando...");
-               // }
+                //System.out.println("\nProcessando...");
+                // }
             } while (testeOperacao == false);
         } catch (IOException ex) {
             Logger.getLogger(ClientTCP.class.getName()).log(Level.SEVERE, null, ex);

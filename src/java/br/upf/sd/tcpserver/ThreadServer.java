@@ -72,7 +72,6 @@ public class ThreadServer extends Thread {
             if (controle >= 5) {
                 sair();
             }
-
         } while (operacao != 7);
     }
 
@@ -135,7 +134,8 @@ public class ThreadServer extends Thread {
             System.out.println("Thread " + contThread + " - " + "Erro ao obter o endereço IP - " + ServerTCP.getDataHora());
         }
 
-        String menu = ("\n--------------------------------------------------------------------------==--\n"
+        String menu = ("\n=======================================================================\n"
+                + "=======================================================================\n"
                 + "\n***********************************************************************\n"
                 + "            Você está conectado ao servidor " + ipServer + "!          \n"
                 + "***********************************************************************\n"
@@ -214,7 +214,7 @@ public class ThreadServer extends Thread {
             if (ver == true) {
                 envia.writeBoolean(true);
                 envia.flush();
-                System.out.println("Thread " + contThread + " - " + "Servidor confirmou inclusâo ao cliente - " + ServerTCP.getDataHora());
+                System.out.println("Thread " + contThread + " - " + "Servidor confirmou inclusão ao cliente - " + ServerTCP.getDataHora());
             } else {
                 envia.writeBoolean(false);
                 envia.flush();
@@ -315,7 +315,7 @@ public class ThreadServer extends Thread {
             List listaCarro = dao.listarAnoModelo(carro.getAno(), carro.getModelo());
 
             if (listaCarro == null) {
-                envia.writeObject(listaCarro.toString());
+                envia.writeObject(null);
                 envia.flush();
                 System.out.println("Thread " + contThread + " - " + "Carros não encontrados.. informando cliente - " + ServerTCP.getDataHora());
             } else {

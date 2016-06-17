@@ -28,7 +28,7 @@ public class Cliente {
         String resposta;
         int porta = 2010;
         //alterar o ip do servidor
-        String ip = "localhost";
+        String ip = "127.0.0.1";
         InetAddress servidor = null;
         
       
